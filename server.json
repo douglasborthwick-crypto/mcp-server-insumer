@@ -1,12 +1,29 @@
 {
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.douglasborthwick-crypto/insumer",
-  "description": "On-chain token verification across 31 blockchains. ECDSA-signed boolean attestations, discount code generation, merchant onboarding — full autonomous agent workflow.",
-  "version": "1.0.0",
+  "description": "On-chain token verification across 31 blockchains. ECDSA-signed attestations.",
+  "repository": {
+    "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer",
+    "source": "github"
+  },
+  "version": "1.0.1",
   "packages": [
     {
-      "registry_type": "npm",
+      "registryType": "npm",
       "identifier": "mcp-server-insumer",
-      "version": "1.0.0"
+      "version": "1.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "InsumerAPI key (starts with insr_live_)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "INSUMER_API_KEY"
+        }
+      ]
     }
   ]
 }

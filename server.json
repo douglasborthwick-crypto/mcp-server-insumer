@@ -1,0 +1,12 @@
+{
+  "name": "io.github.douglasborthwick-crypto/insumer",
+  "description": "On-chain token verification across 31 blockchains. ECDSA-signed boolean attestations, discount code generation, merchant onboarding — full autonomous agent workflow.",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registry_type": "npm",
+      "identifier": "mcp-server-insumer",
+      "version": "1.0.0"
+    }
+  ]
+}

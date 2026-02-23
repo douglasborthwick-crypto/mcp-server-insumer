@@ -1,0 +1,47 @@
+{
+  "name": "mcp-server-insumer",
+  "version": "1.0.0",
+  "description": "MCP server for InsumerAPI — on-chain token verification across 31 blockchains",
+  "license": "MIT",
+  "author": "Douglas Borthwick",
+  "homepage": "https://insumermodel.com/developers/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "insumer",
+    "blockchain",
+    "token-verification",
+    "attestation",
+    "ecdsa",
+    "web3",
+    "ai-agents"
+  ],
+  "type": "module",
+  "bin": {
+    "mcp-server-insumer": "build/index.js"
+  },
+  "files": [
+    "build",
+    "server.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

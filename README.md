@@ -1,8 +1,8 @@
 # mcp-server-insumer
 
-MCP server for [InsumerAPI](https://insumermodel.com/developers/) — on-chain token verification across 31 blockchains.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) — privacy-preserving on-chain verification and attestation across 31 blockchains.
 
-Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously discover merchants, verify token holdings, generate discount codes, and onboard new merchants.
+Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants — with no balances or private data revealed.
 
 ## Quick Start
 
@@ -52,7 +52,7 @@ Add to your MCP settings:
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify token balances / NFT ownership across 31 chains. ECDSA-signed boolean result. 1 credit. |
+| `insumer_attest` | Verify arbitrary on-chain conditions (token balances, NFT ownership, multi-chain logic). Returns ECDSA-signed boolean — no balances revealed. 1 credit. |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 credit. |
 
 ### Discovery (free)

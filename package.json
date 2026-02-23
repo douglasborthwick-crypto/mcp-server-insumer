@@ -1,7 +1,7 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.0.1",
-  "description": "MCP server for InsumerAPI — on-chain token verification across 31 blockchains",
+  "version": "1.0.2",
+  "description": "MCP server for InsumerAPI — privacy-preserving on-chain verification and attestation across 31 blockchains",
   "license": "MIT",
   "author": "Douglas Borthwick",
   "mcpName": "io.github.douglasborthwick-crypto/insumer",
@@ -15,7 +15,7 @@
     "mcp-server",
     "insumer",
     "blockchain",
-    "token-verification",
+    "on-chain-verification",
     "attestation",
     "ecdsa",
     "web3",

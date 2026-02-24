@@ -145,7 +145,7 @@ server.tool(
 
 server.tool(
   "insumer_verify",
-  "Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. Checks on-chain balances and generates a verification code. Consumes 1 merchant credit. If merchant has Stripe Connect, a coupon is auto-created.",
+  "Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. Returns tier and discount percentage — never raw balance amounts. Consumes 1 merchant credit. If merchant has Stripe Connect, a coupon is auto-created.",
   {
     merchantId: z.string().describe("Merchant ID"),
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
@@ -215,7 +215,7 @@ server.tool(
 
 server.tool(
   "insumer_check_discount",
-  "Calculate discount for a wallet at a merchant. Checks on-chain balances and returns total discount with breakdown. Free — does not consume credits.",
+  "Calculate discount for a wallet at a merchant. Checks on-chain balances and returns tier and discount percentage per token — never raw balance amounts. Free — does not consume credits.",
   {
     merchant: z.string().describe("Merchant ID"),
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),

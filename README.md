@@ -46,13 +46,19 @@ Add to your MCP settings:
 2. Sign up for a free key (instant, no credit card)
 3. Set it as `INSUMER_API_KEY`
 
-## Tools (16)
+## Tools (17)
+
+### Key Discovery (free)
+
+| Tool | Description |
+|------|-------------|
+| `insumer_jwks` | Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key. Use the `kid` from attestation responses to match the correct key. |
 
 ### On-Chain Verification (cost credits)
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership). Returns ECDSA-signed boolean with `evaluatedCondition` (exact logic), `conditionHash` (SHA-256 tamper-evidence), and `blockNumber`/`blockTimestamp` (RPC chain freshness). 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
+| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership). Returns ECDSA-signed boolean with `kid` (signing key ID), `evaluatedCondition` (exact logic), `conditionHash` (SHA-256 tamper-evidence), and `blockNumber`/`blockTimestamp` (RPC chain freshness). 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 credit. |
 
 ### Discovery (free)

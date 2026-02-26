@@ -109,8 +109,25 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.0.0",
+  version: "1.0.6",
 });
+
+// ============================================================
+// KEY DISCOVERY
+// ============================================================
+
+server.tool(
+  "insumer_jwks",
+  "Get the JWKS (JSON Web Key Set) containing InsumerAPI's ECDSA P-256 public signing key. Use this to verify attestation signatures without hardcoding the key. The kid field in attestation responses identifies which key signed the response. No authentication required.",
+  {},
+  async () => {
+    const res = await fetch(`${API_BASE}/jwks`);
+    const data = await res.json();
+    return {
+      content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+    };
+  }
+);
 
 // ============================================================
 // ON-CHAIN VERIFICATION
@@ -118,7 +135,7 @@ const server = new McpServer({
 
 server.tool(
   "insumer_attest",
-  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership) across 31 chains. Returns ECDSA-signed boolean results — never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits).",
+  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership) across 31 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits).",
   {
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),

@@ -52,7 +52,7 @@ Add to your MCP settings:
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify arbitrary on-chain conditions (token balances, NFT ownership, multi-chain logic). Returns ECDSA-signed boolean — no balances revealed. 1 credit. |
+| `insumer_attest` | Verify arbitrary on-chain conditions (token balances, NFT ownership, multi-chain logic). Returns ECDSA-signed boolean — no balances revealed. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 credit. |
 
 ### Discovery (free)

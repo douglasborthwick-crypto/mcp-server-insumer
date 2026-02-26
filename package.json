@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MCP server for InsumerAPI — privacy-preserving on-chain verification and attestation across 31 blockchains",
   "license": "MIT",
   "author": "Douglas Borthwick",

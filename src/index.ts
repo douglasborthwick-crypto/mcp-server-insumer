@@ -118,10 +118,11 @@ const server = new McpServer({
 
 server.tool(
   "insumer_attest",
-  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership) across 31 chains. Returns ECDSA-signed boolean results — never exposes actual balances. Consumes 1 credit.",
+  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership) across 31 chains. Returns ECDSA-signed boolean results — never exposes actual balances. Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits) — enables trustless verification against public block headers.",
   {
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
+    proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Proofs available for token_balance on RPC chains only."),
     conditions: z
       .array(
         z.object({

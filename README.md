@@ -1,8 +1,12 @@
 # mcp-server-insumer
 
-MCP server for [InsumerAPI](https://insumermodel.com/developers/) — privacy-preserving on-chain verification and attestation across 31 blockchains.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) -- on-chain verification across 31 blockchains. Returns ECDSA-signed booleans without exposing wallet balances. Up to 10 conditions per request, each with its own chainId. Optional Merkle storage proofs for trustless verification.
 
-Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants — with no balances or private data revealed.
+Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
+
+**In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
+
+Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (6 tools, PyPI) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
 ## Quick Start
 

@@ -64,14 +64,14 @@ const ChainId = z
 
 const OnboardingChainId = z
   .union([
-    z.enum(["1", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866"]).transform(Number),
+    z.enum(["1", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866", "480"]).transform(Number),
     z.number().int().refine(
-      (n) => [1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866].includes(n),
+      (n) => [1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480].includes(n),
       "Must be a supported onboarding chain"
     ),
     z.literal("solana"),
   ])
-  .describe("Onboarding chain: 1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, or 'solana'");
+  .describe("Onboarding chain: 1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, or 'solana'");
 
 const UsdcChainId = z
   .union([
@@ -135,7 +135,7 @@ server.tool(
 
 server.tool(
   "insumer_attest",
-  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership, EAS attestations) across 31 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits). For EAS attestations (e.g. Coinbase Verifications), use a compliance template name or raw schemaId. Use insumer_compliance_templates to list available templates.",
+  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 31 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits). For EAS attestations, use a compliance template (Coinbase Verifications, Gitcoin Passport) or raw schemaId. For Farcaster, use type 'farcaster_id' (checks IdRegistry on Optimism). Use insumer_compliance_templates to list available templates.",
   {
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
@@ -143,7 +143,7 @@ server.tool(
     conditions: z
       .array(
         z.object({
-          type: z.enum(["token_balance", "nft_ownership", "eas_attestation"]).describe("Condition type"),
+          type: z.enum(["token_balance", "nft_ownership", "eas_attestation", "farcaster_id"]).describe("Condition type: token_balance, nft_ownership, eas_attestation, or farcaster_id (Farcaster IdRegistry on Optimism)"),
           contractAddress: z.string().optional().describe("Token or NFT contract address (required for token_balance and nft_ownership)"),
           chainId: ChainId.optional(),
           threshold: z.number().optional().describe("Minimum balance required (for token_balance)"),
@@ -152,7 +152,7 @@ server.tool(
           schemaId: z.string().optional().describe("EAS schema ID (bytes32 hex). Required for eas_attestation unless template is provided."),
           attester: z.string().optional().describe("Expected attester address (optional, for eas_attestation)"),
           indexer: z.string().optional().describe("EAS indexer contract address (optional, for eas_attestation)"),
-          template: z.enum(["coinbase_verified_account", "coinbase_verified_country", "coinbase_one"]).optional().describe("Compliance template name. Use instead of raw schemaId/attester/indexer for eas_attestation."),
+          template: z.enum(["coinbase_verified_account", "coinbase_verified_country", "coinbase_one", "gitcoin_passport_score", "gitcoin_passport_active"]).optional().describe("Compliance template name. Use instead of raw schemaId/attester/indexer for eas_attestation. Gitcoin Passport templates check Sybil resistance on Optimism."),
         })
       )
       .min(1)
@@ -167,7 +167,7 @@ server.tool(
 
 server.tool(
   "insumer_compliance_templates",
-  "List available compliance templates for EAS attestation verification. Templates provide pre-configured schema IDs, attester addresses, and indexer contracts for common KYC/identity providers (e.g. Coinbase Verifications on Base). Use a template name in insumer_attest conditions instead of specifying raw EAS parameters. No authentication or credits required.",
+  "List available compliance templates for EAS attestation verification. Templates provide pre-configured schema IDs, attester addresses, and decoder contracts for KYC/identity providers (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Use a template name in insumer_attest conditions instead of specifying raw EAS parameters. No authentication or credits required.",
   {},
   async () => {
     const url = `${API_BASE}/compliance/templates`;
@@ -182,7 +182,7 @@ server.tool(
 
 server.tool(
   "insumer_wallet_trust",
-  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 14 curated checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), and NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks). Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
+  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 17 curated checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana check (15th condition)."),

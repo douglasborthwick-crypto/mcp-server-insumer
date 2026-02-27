@@ -109,7 +109,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.0.8",
+  version: "1.1.0",
 });
 
 // ============================================================
@@ -171,6 +171,36 @@ server.tool(
   },
   async (args) => {
     const result = await apiCall("POST", "/trust", args);
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_batch_wallet_trust",
+  "Generate wallet trust fact profiles for up to 10 wallets in a single request. Shared block fetches make this 5-8x faster than sequential calls. Each wallet gets an independently ECDSA-signed profile with its own TRST-XXXXX ID. Supports partial success — failed wallets get error entries while successful ones return full profiles. Costs 3 credits per successful wallet (standard) or 6 credits per wallet (proof: 'merkle'). Credits only charged for successful profiles.",
+  {
+    wallets: z
+      .array(
+        z.object({
+          wallet: z.string().describe("EVM wallet address (0x...)"),
+          solanaWallet: z
+            .string()
+            .optional()
+            .describe("Solana wallet address (base58). Adds USDC on Solana check."),
+        })
+      )
+      .min(1)
+      .max(10)
+      .describe("1-10 wallet entries to profile"),
+    proof: z
+      .enum(["merkle"])
+      .optional()
+      .describe(
+        "Set to 'merkle' for EIP-1186 Merkle storage proofs on all wallets (6 credits/wallet)."
+      ),
+  },
+  async (args) => {
+    const result = await apiCall("POST", "/trust/batch", args);
     return formatResult(result);
   }
 );

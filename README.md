@@ -6,7 +6,7 @@ Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible clie
 
 **In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
 
-Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (6 tools, PyPI) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
+Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (23 tools, PyPI) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
 ## Quick Start
 
@@ -50,7 +50,7 @@ Add to your MCP settings:
 2. Sign up for a free key (instant, no credit card)
 3. Set it as `INSUMER_API_KEY`
 
-## Tools (17)
+## Tools (23)
 
 ### Key Discovery (free)
 
@@ -62,8 +62,11 @@ Add to your MCP settings:
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership). Returns ECDSA-signed boolean with `kid` (signing key ID), `evaluatedCondition` (exact logic), `conditionHash` (SHA-256 tamper-evidence), and `blockNumber`/`blockTimestamp` (RPC chain freshness). 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
-| `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 credit. |
+| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
+| `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
+| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 17 checks across stablecoins, governance, NFTs, and staking. 3 credits (6 with merkle). |
+| `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
+| `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 merchant credit. |
 
 ### Discovery (free)
 
@@ -93,6 +96,14 @@ Add to your MCP settings:
 | `insumer_configure_settings` | Set discount mode, cap, USDC payments. |
 | `insumer_publish_directory` | Publish merchant to public directory. |
 | `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. |
+
+### Commerce Protocol Integration
+
+| Tool | Description |
+|------|-------------|
+| `insumer_acp_discount` | Check discount eligibility in OpenAI/Stripe ACP format. Returns coupon objects and per-item allocations. 1 merchant credit. |
+| `insumer_ucp_discount` | Check discount eligibility in Google UCP format. Returns title, extension field, and applied array. 1 merchant credit. |
+| `insumer_validate_code` | Validate an INSR-XXXXX discount code. Returns validity, discount percent, expiry. Free, no auth. |
 
 ## Supported Chains (31)
 

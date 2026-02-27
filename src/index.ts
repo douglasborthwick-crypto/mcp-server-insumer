@@ -135,7 +135,7 @@ server.tool(
 
 server.tool(
   "insumer_attest",
-  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership) across 31 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits).",
+  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership, EAS attestations) across 31 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits). For EAS attestations (e.g. Coinbase Verifications), use a compliance template name or raw schemaId. Use insumer_compliance_templates to list available templates.",
   {
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
@@ -143,12 +143,16 @@ server.tool(
     conditions: z
       .array(
         z.object({
-          type: z.enum(["token_balance", "nft_ownership"]).describe("Condition type"),
-          contractAddress: z.string().describe("Token or NFT contract address"),
-          chainId: ChainId,
+          type: z.enum(["token_balance", "nft_ownership", "eas_attestation"]).describe("Condition type"),
+          contractAddress: z.string().optional().describe("Token or NFT contract address (required for token_balance and nft_ownership)"),
+          chainId: ChainId.optional(),
           threshold: z.number().optional().describe("Minimum balance required (for token_balance)"),
           decimals: z.number().int().min(0).max(18).optional().describe("Token decimals (default 18)"),
           label: z.string().max(100).optional().describe("Human-readable label"),
+          schemaId: z.string().optional().describe("EAS schema ID (bytes32 hex). Required for eas_attestation unless template is provided."),
+          attester: z.string().optional().describe("Expected attester address (optional, for eas_attestation)"),
+          indexer: z.string().optional().describe("EAS indexer contract address (optional, for eas_attestation)"),
+          template: z.enum(["coinbase_verified_account", "coinbase_verified_country", "coinbase_one"]).optional().describe("Compliance template name. Use instead of raw schemaId/attester/indexer for eas_attestation."),
         })
       )
       .min(1)
@@ -157,6 +161,21 @@ server.tool(
   },
   async (args) => {
     const result = await apiCall("POST", "/attest", args);
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_compliance_templates",
+  "List available compliance templates for EAS attestation verification. Templates provide pre-configured schema IDs, attester addresses, and indexer contracts for common KYC/identity providers (e.g. Coinbase Verifications on Base). Use a template name in insumer_attest conditions instead of specifying raw EAS parameters. No authentication or credits required.",
+  {},
+  async () => {
+    const url = `${API_BASE}/compliance/templates`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+    const result = await res.json() as { ok: boolean; data?: unknown; error?: unknown; meta?: unknown };
     return formatResult(result);
   }
 );

@@ -1,7 +1,7 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.1.0",
-  "description": "MCP server for InsumerAPI — on-chain verification across 31 blockchains. ECDSA-signed booleans, wallet trust profiles, batch trust profiling, optional Merkle proofs, 19 tools. Used by DJD Agent Score (Coinbase x402).",
+  "version": "1.2.0",
+  "description": "MCP server for InsumerAPI — on-chain verification across 31 blockchains. ECDSA-signed booleans, wallet trust profiles, EAS attestations, compliance templates, optional Merkle proofs, 20 tools. Used by DJD Agent Score (Coinbase x402).",
   "license": "MIT",
   "author": "Douglas Borthwick",
   "mcpName": "io.github.douglasborthwick-crypto/insumer",
@@ -23,7 +23,10 @@
     "token-gating",
     "nft-verification",
     "agent-trust",
-    "merkle-proof"
+    "merkle-proof",
+    "eas-attestation",
+    "compliance",
+    "kyc"
   ],
   "type": "module",
   "bin": {

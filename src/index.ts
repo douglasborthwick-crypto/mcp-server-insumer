@@ -109,7 +109,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.1.0",
+  version: "1.3.0",
 });
 
 // ============================================================
@@ -510,6 +510,71 @@ server.tool(
       body
     );
     return formatResult(result);
+  }
+);
+
+// ============================================================
+// COMMERCE PROTOCOL INTEGRATION
+// ============================================================
+
+server.tool(
+  "insumer_acp_discount",
+  "Check token-holder discount eligibility in OpenAI/Stripe Agentic Commerce Protocol (ACP) format. Returns coupon objects, applied/rejected arrays, and per-item allocations compatible with ACP checkout flows. Same on-chain verification as insumer_verify, wrapped in ACP format. Consumes 1 merchant credit.",
+  {
+    merchantId: z.string().describe("Merchant ID"),
+    wallet: z.string().optional().describe("EVM wallet address (0x...)"),
+    solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
+    items: z
+      .array(
+        z.object({
+          path: z.string().describe("JSONPath reference to the line item, e.g. '$.line_items[0]'"),
+          amount: z.number().int().describe("Item price in cents"),
+        })
+      )
+      .optional()
+      .describe("Optional line items for per-item cent-amount allocations"),
+  },
+  async (args) => {
+    const result = await apiCall("POST", "/acp/discount", args);
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_ucp_discount",
+  "Check token-holder discount eligibility in Google Universal Commerce Protocol (UCP) format. Returns title, extension field, and applied array compatible with UCP checkout flows. Same on-chain verification as insumer_verify, wrapped in UCP format. Consumes 1 merchant credit.",
+  {
+    merchantId: z.string().describe("Merchant ID"),
+    wallet: z.string().optional().describe("EVM wallet address (0x...)"),
+    solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
+    items: z
+      .array(
+        z.object({
+          path: z.string().describe("JSONPath reference to the line item, e.g. '$.line_items[0]'"),
+          amount: z.number().int().describe("Item price in cents"),
+        })
+      )
+      .optional()
+      .describe("Optional line items for per-item cent-amount allocations"),
+  },
+  async (args) => {
+    const result = await apiCall("POST", "/ucp/discount", args);
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_validate_code",
+  "Validate an INSR-XXXXX discount code. For merchant backends during ACP/UCP checkout to confirm code validity, discount percent, and expiry. Returns valid/invalid status with reason. No authentication required, no credits consumed. Does not expose wallet or token data.",
+  {
+    code: z.string().regex(/^INSR-[A-Z0-9]{5}$/).describe("Discount code in INSR-XXXXX format"),
+  },
+  async (args) => {
+    const res = await fetch(`${API_BASE}/codes/${encodeURIComponent(args.code)}`);
+    const data = await res.json();
+    return {
+      content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+    };
   }
 );
 

@@ -109,7 +109,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.3.0",
+  version: "1.4.1",
 });
 
 // ============================================================
@@ -185,7 +185,7 @@ server.tool(
   "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 17 curated checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
-    solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana check (15th condition)."),
+    solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana check (18th check)."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs on stablecoin/governance checks (6 credits)."),
   },
   async (args) => {

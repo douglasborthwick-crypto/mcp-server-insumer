@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "MCP server for InsumerAPI — on-chain verification across 31 blockchains. ECDSA-signed booleans, wallet trust profiles, EAS attestations, Gitcoin Passport, Farcaster ID, staking positions, compliance templates, optional Merkle proofs, ACP/UCP commerce protocol integration, domain verification, 25 tools. Used by DJD Agent Score (Coinbase x402).",
   "license": "MIT",
   "author": "Douglas Borthwick",

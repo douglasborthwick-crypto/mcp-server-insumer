@@ -4,7 +4,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const API_BASE = "https://us-central1-insumer-merchant.cloudfunctions.net/insumerApi/v1";
+const API_BASE = "https://api.insumermodel.com/v1";
 
 const apiKey = process.env.INSUMER_API_KEY;
 if (!apiKey) {

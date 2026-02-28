@@ -6,7 +6,7 @@ Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible clie
 
 **In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
 
-Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (23 tools, PyPI) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
+Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (25 tools, PyPI) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
 ## Quick Start
 
@@ -44,13 +44,93 @@ Add to your MCP settings:
 }
 ```
 
-## Get an API Key
+### Get an API Key
 
 1. Go to [insumermodel.com/developers](https://insumermodel.com/developers/#pricing)
 2. Sign up for a free key (instant, no credit card)
 3. Set it as `INSUMER_API_KEY`
 
-## Tools (23)
+## What You Get Back
+
+When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
+
+```json
+{
+  "ok": true,
+  "data": {
+    "attestation": {
+      "id": "ATST-A7C3E",
+      "pass": true,
+      "results": [
+        {
+          "condition": 0,
+          "met": true,
+          "label": "USDC >= 1000 on Ethereum",
+          "type": "token_balance",
+          "chainId": 1,
+          "evaluatedCondition": {
+            "chainId": 1,
+            "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            "decimals": 6,
+            "operator": "gte",
+            "threshold": 1000,
+            "type": "token_balance"
+          },
+          "conditionHash": "0x8a3b...",
+          "blockNumber": "0x129e3f7",
+          "blockTimestamp": "2026-02-28T12:34:56.000Z"
+        }
+      ],
+      "passCount": 1,
+      "failCount": 0,
+      "attestedAt": "2026-02-28T12:34:57.000Z",
+      "expiresAt": "2026-02-28T13:04:57.000Z"
+    },
+    "sig": "MEUCIQD...(base64 ECDSA signature)...",
+    "kid": "insumer-attest-v1"
+  },
+  "meta": {
+    "version": "1.0",
+    "timestamp": "2026-02-28T12:34:57.000Z",
+    "creditsCharged": 1,
+    "creditsRemaining": 99
+  }
+}
+```
+
+The `sig` is an ECDSA P-256 signature over `{id, pass, results, attestedAt}`. The `kid` identifies which key signed it. The `conditionHash` is a SHA-256 of the exact condition logic that was evaluated.
+
+No balances. No amounts. Just a cryptographically signed true/false.
+
+## Verify the Response
+
+Your agent gets the attestation. Your application should verify it. Install [insumer-verify](https://www.npmjs.com/package/insumer-verify):
+
+```bash
+npm install insumer-verify
+```
+
+```typescript
+import { verifyAttestation } from "insumer-verify";
+
+// attestationResponse = the JSON your agent received from insumer_attest
+const result = await verifyAttestation(attestationResponse, {
+  jwksUrl: "https://insumermodel.com/.well-known/jwks.json",
+  maxAge: 120, // reject if block data is older than 2 minutes
+});
+
+if (result.valid) {
+  // Signature verified, condition hashes match, not expired
+  const pass = attestationResponse.data.attestation.pass;
+  console.log(`Attestation ${pass ? "passed" : "failed"} all conditions`);
+} else {
+  console.log("Verification failed:", result.checks);
+}
+```
+
+This runs 4 independent checks: ECDSA signature, condition hash integrity, block freshness, and attestation expiry. Zero runtime dependencies, uses Web Crypto API.
+
+## Tools (25)
 
 ### Key Discovery (free)
 
@@ -97,6 +177,13 @@ Add to your MCP settings:
 | `insumer_publish_directory` | Publish merchant to public directory. |
 | `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. |
 
+### Domain Verification (owner-only)
+
+| Tool | Description |
+|------|-------------|
+| `insumer_request_domain_verification` | Request a verification token for a merchant's domain. Returns token and 3 methods (DNS TXT, meta tag, file upload). |
+| `insumer_verify_domain` | Complete domain verification after placing the token. Verified merchants get a trust badge. |
+
 ### Commerce Protocol Integration
 
 | Tool | Description |
@@ -110,15 +197,6 @@ Add to your MCP settings:
 **EVM**: Ethereum, BNB Chain, Base, Avalanche, Polygon, Arbitrum, Optimism, Chiliz, Soneium, Plume, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain
 
 **Non-EVM**: Solana
-
-## Example Agent Workflow
-
-```
-1. insumer_list_merchants → find merchants accepting UNI
-2. insumer_check_discount → calculate discount for user's wallet
-3. insumer_verify → generate discount code
-4. insumer_confirm_payment → confirm USDC payment (if applicable)
-```
 
 ## Development
 

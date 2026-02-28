@@ -6,10 +6,9 @@ import { z } from "zod";
 
 const API_BASE = "https://api.insumermodel.com/v1";
 
-const apiKey = process.env.INSUMER_API_KEY;
+const apiKey = process.env.INSUMER_API_KEY ?? "";
 if (!apiKey) {
-  console.error("INSUMER_API_KEY environment variable is required");
-  process.exit(1);
+  console.error("Warning: INSUMER_API_KEY not set. Tools requiring authentication will return errors.");
 }
 
 // --- Shared API helper ---
@@ -19,12 +18,15 @@ async function apiCall(
   path: string,
   body?: Record<string, unknown>
 ): Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }> {
+  if (!apiKey) {
+    return { ok: false, error: "INSUMER_API_KEY environment variable is not set. Get a free key at https://insumermodel.com/developers/" };
+  }
   const url = `${API_BASE}${path}`;
   const res = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": apiKey!,
+      "X-API-Key": apiKey,
     },
     body: body ? JSON.stringify(body) : undefined,
   });

@@ -109,7 +109,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.4.1",
+  version: "1.4.2",
 });
 
 // ============================================================

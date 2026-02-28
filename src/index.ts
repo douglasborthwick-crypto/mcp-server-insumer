@@ -109,7 +109,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.4.2",
+  version: "1.5.0",
 });
 
 // ============================================================
@@ -508,6 +508,43 @@ server.tool(
       "POST",
       `/merchants/${encodeURIComponent(id)}/credits`,
       body
+    );
+    return formatResult(result);
+  }
+);
+
+// ============================================================
+// DOMAIN VERIFICATION
+// ============================================================
+
+server.tool(
+  "insumer_request_domain_verification",
+  "Request a domain verification token for a merchant. Returns the token and three verification methods: DNS TXT record, HTML meta tag, or file upload. After placing the token, call insumer_verify_domain to complete verification. Verified merchants get a trust badge in the public directory. Owner only.",
+  {
+    id: z.string().describe("Merchant ID"),
+    domain: z.string().describe("Domain to verify (e.g. 'example.com')"),
+  },
+  async (args) => {
+    const { id, ...body } = args;
+    const result = await apiCall(
+      "POST",
+      `/merchants/${encodeURIComponent(id)}/domain-verification`,
+      body
+    );
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_verify_domain",
+  "Verify domain ownership for a merchant. Call this after placing the verification token (from insumer_request_domain_verification) via DNS TXT record, HTML meta tag, or file upload. The server checks all three methods automatically. Rate limited to 5 attempts per hour. Owner only.",
+  {
+    id: z.string().describe("Merchant ID"),
+  },
+  async (args) => {
+    const result = await apiCall(
+      "PUT",
+      `/merchants/${encodeURIComponent(args.id)}/domain-verification`
     );
     return formatResult(result);
   }

@@ -12,7 +12,7 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 30 EVM chains + Solana + XRPL. Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 32 blockchains (30 EVM + Solana + XRPL). Returns ECDSA-signed boolean results — no raw balances exposed.
 
 **Version**: 1.0.0
 
@@ -107,7 +107,7 @@ List all 32 supported chains with chain IDs and RPC status.
 #### `insumer_chain_details(chainId)`
 Get details for a specific chain including supported token standards.
 
-## Supported Chains (30 EVM + Solana + XRPL)
+## Supported Chains (32)
 
 Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL.
 

@@ -1,6 +1,6 @@
 ---
 name: insumer-verify
-description: Privacy-preserving on-chain token verification across 31 blockchains. Verify wallet holdings with ECDSA-signed proofs — no balances exposed.
+description: Privacy-preserving on-chain token verification across 32 blockchains. Verify wallet holdings with ECDSA-signed proofs — no balances exposed.
 homepage: https://insumermodel.com/developers/
 metadata:
   clawdbot:
@@ -12,7 +12,7 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 31 EVM chains + Solana. Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 30 EVM chains + Solana + XRPL. Returns ECDSA-signed boolean results — no raw balances exposed.
 
 **Version**: 1.0.0
 
@@ -102,14 +102,14 @@ Generate a signed, time-limited discount code for a verified wallet.
 ### Chain Information
 
 #### `insumer_supported_chains()`
-List all 31 supported EVM chains + Solana with chain IDs and RPC status.
+List all 32 supported chains with chain IDs and RPC status.
 
 #### `insumer_chain_details(chainId)`
 Get details for a specific chain including supported token standards.
 
-## Supported Chains (31 EVM + Solana)
+## Supported Chains (30 EVM + Solana + XRPL)
 
-Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana.
+Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL.
 
 ## Security Model
 

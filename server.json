@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.douglasborthwick-crypto/insumer",
-  "description": "Privacy-preserving on-chain verification and attestation across 31 blockchains.",
+  "description": "Privacy-preserving on-chain verification and attestation across 32 blockchains.",
   "repository": {
     "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer",
     "source": "github"

@@ -1,6 +1,6 @@
 # mcp-server-insumer
 
-MCP server for [InsumerAPI](https://insumermodel.com/developers/) -- on-chain verification across 31 blockchains. Returns ECDSA-signed booleans without exposing wallet balances. Up to 10 conditions per request, each with its own chainId. Optional Merkle storage proofs for trustless verification.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) -- on-chain verification across 32 blockchains. Returns ECDSA-signed booleans without exposing wallet balances. Up to 10 conditions per request, each with its own chainId. Optional Merkle storage proofs for trustless verification.
 
 Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
 
@@ -192,11 +192,11 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_ucp_discount` | Check discount eligibility in Google UCP format. Returns title, extension field, and applied array. 1 merchant credit. |
 | `insumer_validate_code` | Validate an INSR-XXXXX discount code. Returns validity, discount percent, expiry. Free, no auth. |
 
-## Supported Chains (31)
+## Supported Chains (32)
 
 **EVM**: Ethereum, BNB Chain, Base, Avalanche, Polygon, Arbitrum, Optimism, Chiliz, Soneium, Plume, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain
 
-**Non-EVM**: Solana
+**Non-EVM**: Solana, XRPL (XRP Ledger — native XRP, trust line tokens, NFTs)
 
 ## Development
 

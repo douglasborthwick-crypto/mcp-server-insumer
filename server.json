@@ -6,12 +6,12 @@
     "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer",
     "source": "github"
   },
-  "version": "1.6.0",
+  "version": "1.6.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "mcp-server-insumer",
-      "version": "1.6.0",
+      "version": "1.6.1",
       "transport": {
         "type": "stdio"
       },

@@ -1,5 +1,7 @@
 # mcp-server-insumer
 
+[![npm](https://img.shields.io/npm/v/mcp-server-insumer)](https://www.npmjs.com/package/mcp-server-insumer) [![Glama](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer/badge)](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 MCP server for [InsumerAPI](https://insumermodel.com/developers/) -- on-chain verification across 32 blockchains. Returns ECDSA-signed booleans without exposing wallet balances. Up to 10 conditions per request, each with its own chainId. Optional Merkle storage proofs for trustless verification.
 
 Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.

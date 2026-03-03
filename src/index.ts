@@ -205,7 +205,7 @@ server.tool(
           type: z.enum(["token_balance", "nft_ownership", "eas_attestation", "farcaster_id"]).describe("Condition type: token_balance, nft_ownership, eas_attestation, or farcaster_id (Farcaster IdRegistry on Optimism)"),
           contractAddress: z.string().optional().describe("Token or NFT contract address (required for token_balance and nft_ownership)"),
           chainId: ChainId.optional(),
-          threshold: z.number().optional().describe("Minimum balance required (for token_balance)"),
+          threshold: z.number().optional().describe("Minimum balance required (for token_balance). Must be > 0 when proof is merkle."),
           decimals: z.number().int().min(0).max(18).optional().describe("Token decimals (default 18)"),
           label: z.string().max(100).optional().describe("Human-readable label"),
           schemaId: z.string().optional().describe("EAS schema ID (bytes32 hex). Required for eas_attestation unless template is provided."),

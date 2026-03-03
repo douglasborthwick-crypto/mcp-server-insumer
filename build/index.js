@@ -3,14 +3,15 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 const API_BASE = "https://api.insumermodel.com/v1";
+const KEYGEN_URL = "https://us-central1-insumer-merchant.cloudfunctions.net/createDeveloperApiKey";
 const apiKey = process.env.INSUMER_API_KEY ?? "";
 if (!apiKey) {
-    console.error("Warning: INSUMER_API_KEY not set. Tools requiring authentication will return errors.");
+    console.error("INSUMER_API_KEY not set. Use the insumer_setup tool to generate a free API key, then add it to your MCP config.");
 }
 // --- Shared API helper ---
 async function apiCall(method, path, body) {
     if (!apiKey) {
-        return { ok: false, error: "INSUMER_API_KEY environment variable is not set. Get a free key at https://insumermodel.com/developers/" };
+        return { ok: false, error: "INSUMER_API_KEY is not set. Call the insumer_setup tool to generate a free API key instantly, then add it to your MCP config as INSUMER_API_KEY and restart." };
     }
     const url = `${API_BASE}${path}`;
     const res = await fetch(url, {
@@ -81,7 +82,7 @@ const NftCollectionSchema = z.object({
 // --- Server setup ---
 const server = new McpServer({
     name: "insumer",
-    version: "1.6.2",
+    version: "1.7.0",
 });
 // ============================================================
 // KEY DISCOVERY
@@ -91,6 +92,49 @@ server.tool("insumer_jwks", "Get the JWKS (JSON Web Key Set) containing InsumerA
     const data = await res.json();
     return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+    };
+});
+// ============================================================
+// SETUP — Generate a free API key (no auth required)
+// ============================================================
+server.tool("insumer_setup", "Generate a free InsumerAPI key instantly. No credit card required. Returns an API key (insr_live_...) with 10 verification credits and 100 calls/day. The user should add the key to their MCP config as INSUMER_API_KEY and restart. One free key per email, 3 per IP per day.", {
+    email: z.string().email().describe("Email address for the API key"),
+    appName: z.string().max(100).optional().describe("Name of your app or project (default: 'MCP Agent')"),
+}, async (args) => {
+    const res = await fetch(KEYGEN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            email: args.email,
+            appName: args.appName || "MCP Agent",
+            tier: "free",
+        }),
+    });
+    const result = await res.json();
+    if (result.success && result.key) {
+        return {
+            content: [{
+                    type: "text",
+                    text: [
+                        `API key generated successfully!`,
+                        ``,
+                        `Key: ${result.key}`,
+                        `Tier: free`,
+                        `Credits: 10`,
+                        `Daily limit: 100 calls`,
+                        ``,
+                        `To activate, add this to your MCP config:`,
+                        ``,
+                        `  "env": { "INSUMER_API_KEY": "${result.key}" }`,
+                        ``,
+                        `Then restart your MCP client.`,
+                    ].join("\n"),
+                }],
+        };
+    }
+    return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
     };
 });
 // ============================================================

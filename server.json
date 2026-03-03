@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.douglasborthwick-crypto/insumer",
-  "description": "On-chain verification across 32 chains (EVM, Solana, XRPL). ECDSA-signed booleans. 25 tools.",
+  "description": "Read-first blockchain verification infrastructure. ECDSA-signed, privacy-preserving booleans across 32 chains. 26 tools.",
   "repository": {
     "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer",
     "source": "github"
   },
-  "version": "1.7.0",
+  "version": "1.7.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "mcp-server-insumer",
-      "version": "1.7.0",
+      "version": "1.7.2",
       "transport": {
         "type": "stdio"
       },

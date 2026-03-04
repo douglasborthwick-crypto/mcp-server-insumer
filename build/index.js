@@ -82,7 +82,7 @@ const NftCollectionSchema = z.object({
 // --- Server setup ---
 const server = new McpServer({
     name: "insumer",
-    version: "1.7.0",
+    version: "1.7.3",
 });
 // ============================================================
 // KEY DISCOVERY
@@ -145,6 +145,7 @@ server.tool("insumer_attest", "Create on-chain verification (attestation). Verif
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address). For verifying XRP, trust line tokens (RLUSD, USDC), or NFTs on XRP Ledger."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Proofs available for token_balance on RPC chains only."),
+    format: z.enum(["jwt", "json"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json. Default: 'json' (no JWT)."),
     conditions: z
         .array(z.object({
         type: z.enum(["token_balance", "nft_ownership", "eas_attestation", "farcaster_id"]).describe("Condition type: token_balance, nft_ownership, eas_attestation, or farcaster_id (Farcaster IdRegistry on Optimism)"),

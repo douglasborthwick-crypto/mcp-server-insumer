@@ -117,7 +117,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.7.0",
+  version: "1.7.3",
 });
 
 // ============================================================
@@ -199,6 +199,7 @@ server.tool(
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address). For verifying XRP, trust line tokens (RLUSD, USDC), or NFTs on XRP Ledger."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Proofs available for token_balance on RPC chains only."),
+    format: z.enum(["jwt", "json"]).optional().describe("Set to 'jwt' to include an ES256 JWT bearer token in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json. Default: 'json' (no JWT)."),
     conditions: z
       .array(
         z.object({

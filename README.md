@@ -109,6 +109,20 @@ The `sig` is an ECDSA P-256 signature over `{id, pass, results, attestedAt}`. Th
 
 No balances. No amounts. Just a cryptographically signed true/false.
 
+### Wallet Auth (JWT)
+
+Add `format: "jwt"` to the `insumer_attest` tool parameters to receive the attestation as a standard JWT bearer token:
+
+```json
+{
+  "wallet": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+  "conditions": [ ... ],
+  "format": "jwt"
+}
+```
+
+The response includes an additional `jwt` field containing an ES256-signed JWT. This token is verifiable by any standard JWT library via the JWKS endpoint at `GET /v1/jwks` — making it compatible with Kong, Nginx, Cloudflare Access, AWS API Gateway, and other middleware that accepts JWT bearer tokens.
+
 ## Verify the Response
 
 Your agent gets the attestation. Your application should verify it. Install [insumer-verify](https://www.npmjs.com/package/insumer-verify):

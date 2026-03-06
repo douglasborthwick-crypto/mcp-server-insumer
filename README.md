@@ -219,11 +219,19 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_ucp_discount` | Check discount eligibility in Google UCP format. Returns title, extension field, and applied array. 1 merchant credit. |
 | `insumer_validate_code` | Validate an INSR-XXXXX discount code. Returns validity, discount percent, expiry. Free, no auth. |
 
+## Handling `rpc_failure` Errors
+
+If the API cannot reach one or more data sources (RPC nodes, Helius, XRPL, Covalent) after retries, endpoints that produce signed attestations (`insumer_attest`, `insumer_trust`, `insumer_trust_batch`) return `ok: false` with error code `rpc_failure`. No signature, no JWT, no credits charged. This is a retryable error — the MCP client should retry after a short delay (2-5 seconds).
+
+**Important:** `rpc_failure` is NOT a verification failure. Do not treat it as `pass: false`. It means the data source was temporarily unavailable and the API refused to sign an unverified result.
+
 ## Supported Chains (32)
 
-**EVM**: Ethereum, BNB Chain, Base, Avalanche, Polygon, Arbitrum, Optimism, Chiliz, Soneium, Plume, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain
+**26 direct-RPC chains:** Ethereum, BNB Chain, Base, Avalanche, Polygon, Arbitrum, Optimism, Chiliz, Soneium, Plume, World Chain, Sonic, Gnosis, Mantle, Scroll, Linea, ZKsync, Blast, Celo, Moonbeam, opBNB, Unichain, Ink, Sei, Berachain, ApeChain
 
-**Non-EVM**: Solana, XRPL (XRP Ledger — native XRP, trust line tokens, NFTs)
+**4 Covalent chains:** Taiko, Ronin, Moonriver, Viction
+
+**Non-EVM:** Solana, XRPL (XRP Ledger — native XRP, trust line tokens, NFTs)
 
 ## Development
 

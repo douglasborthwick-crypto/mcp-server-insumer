@@ -134,7 +134,8 @@ npm install insumer-verify
 ```typescript
 import { verifyAttestation } from "insumer-verify";
 
-// attestationResponse = the JSON your agent received from insumer_attest
+// attestationResponse = the full API envelope {ok, data: {attestation, sig, kid}, meta}
+// Do NOT pass attestationResponse.data — the function expects the outer envelope
 const result = await verifyAttestation(attestationResponse, {
   jwksUrl: "https://insumermodel.com/.well-known/jwks.json",
   maxAge: 120, // reject if block data is older than 2 minutes

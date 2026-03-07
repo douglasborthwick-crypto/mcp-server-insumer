@@ -101,7 +101,7 @@ const TokenConfigSchema = z.object({
   chainId: OnboardingChainId,
   contractAddress: z.string().describe("Token contract address. For XRPL: use r-address issuer for trust line tokens, or 'native' for XRP."),
   decimals: z.number().int().min(0).max(18).optional().describe("Token decimals (0-18, default 18)"),
-  currency: z.string().max(3).optional().describe("XRPL trust line currency code (e.g. 'USD' for RLUSD). Required for XRPL trust line tokens."),
+  currency: z.string().optional().describe("XRPL trust line currency code (e.g. 'RLUSD', 'USDC', or 'USD'). Required for XRPL trust line tokens. Standard codes ≤ 3 chars; longer names like 'RLUSD' are auto hex-encoded by the API."),
   tiers: z.array(TierSchema).min(1).max(4).describe("1-4 discount tiers"),
 });
 
@@ -117,7 +117,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.7.6",
+  version: "1.7.8",
 });
 
 // ============================================================
@@ -213,6 +213,8 @@ server.tool(
           attester: z.string().optional().describe("Expected attester address (optional, for eas_attestation)"),
           indexer: z.string().optional().describe("EAS indexer contract address (optional, for eas_attestation)"),
           template: z.enum(["coinbase_verified_account", "coinbase_verified_country", "coinbase_one", "gitcoin_passport_score", "gitcoin_passport_active"]).optional().describe("Compliance template name. Use instead of raw schemaId/attester/indexer for eas_attestation. Gitcoin Passport templates check Sybil resistance on Optimism."),
+          currency: z.string().optional().describe("XRPL trust line currency code (e.g. 'RLUSD', 'USDC'). Required for XRPL trust line tokens, ignored for other chains."),
+          taxon: z.number().int().optional().describe("XRPL NFToken taxon filter (optional, for nft_ownership on XRPL only). Filters NFTs by issuer + taxon."),
         })
       )
       .min(1)

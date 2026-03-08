@@ -118,6 +118,8 @@ The `sig` is an ECDSA P-256 signature over `{id, pass, results, attestedAt}`. Th
 
 No balances. No amounts. Just a cryptographically signed true/false.
 
+For XRPL conditions, results include `ledgerIndex`, `ledgerHash` (validated ledger hash), and `trustLineState: { frozen: boolean }` instead of `blockNumber`/`blockTimestamp`. Native XRP conditions include `ledgerIndex` and `ledgerHash` but not `trustLineState`. Frozen trust lines cause `met: false`.
+
 ### Wallet Auth (JWT)
 
 Add `format: "jwt"` to the `insumer_attest` tool parameters to receive the attestation as a standard JWT bearer token:

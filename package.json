@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.7.9",
+  "version": "1.7.10",
   "description": "MCP server for The Insumer Model — read-first blockchain verification infrastructure that returns ECDSA-signed, privacy-preserving booleans across 32 chains without exposing wallet balances. 26 tools: attestation, wallet trust profiles, compliance templates, ACP/UCP commerce, Merkle proofs, instant API key setup. Not a loyalty program. Not an oracle.",
   "license": "MIT",
   "author": "Douglas Borthwick",

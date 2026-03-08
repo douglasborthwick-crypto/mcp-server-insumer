@@ -52,10 +52,19 @@ Add to your MCP settings:
 
 **Option A — Let your agent do it:** Start the server without a key. Your AI agent can call the `insumer_setup` tool with your email to generate a free key instantly. Add it to your config and restart.
 
-**Option B — Manual:**
-1. Go to [insumermodel.com/developers](https://insumermodel.com/developers/#pricing)
-2. Sign up for a free key (instant, no credit card)
-3. Set it as `INSUMER_API_KEY`
+**Option B — Terminal (no browser needed):**
+
+```bash
+curl -s -X POST https://us-central1-insumer-merchant.cloudfunctions.net/createDeveloperApiKey \
+  -H "Content-Type: application/json" \
+  -d '{"email": "you@example.com", "appName": "MCP Server", "tier": "free"}' | jq .
+```
+
+Returns an `insr_live_...` key with 10 credits and 100 calls/day. One free key per email.
+
+**Option C — Browser:** Go to [insumermodel.com/developers](https://insumermodel.com/developers/#pricing) and generate a free key instantly.
+
+Set it as `INSUMER_API_KEY` in your config.
 
 ## What You Get Back
 

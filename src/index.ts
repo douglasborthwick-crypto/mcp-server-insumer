@@ -86,9 +86,8 @@ const UsdcChainId = z
       "Must be a supported USDC chain"
     ),
     z.literal("solana"),
-    z.literal("xrpl"),
   ])
-  .describe("USDC chain: 1, 8453, 137, 42161, 10, 56, 43114, 'solana', or 'xrpl'");
+  .describe("USDC chain: 1, 8453, 137, 42161, 10, 56, 43114, or 'solana'");
 
 const TierSchema = z.object({
   name: z.string().max(30).describe("Tier name, e.g. 'Gold', 'Silver'"),
@@ -199,7 +198,7 @@ server.tool(
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address). For verifying XRP, trust line tokens (RLUSD, USDC), or NFTs on XRP Ledger."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Proofs available for token_balance on RPC chains only."),
-    format: z.enum(["jwt", "json"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json. Default: 'json' (no JWT)."),
+    format: z.enum(["jwt"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json."),
     conditions: z
       .array(
         z.object({
@@ -207,7 +206,7 @@ server.tool(
           contractAddress: z.string().optional().describe("Token or NFT contract address (required for token_balance and nft_ownership)"),
           chainId: ChainId.optional(),
           threshold: z.number().optional().describe("Minimum balance required (for token_balance). Must be > 0 when proof is merkle."),
-          decimals: z.number().int().min(0).max(18).optional().describe("Token decimals (default 18)"),
+          decimals: z.number().int().min(0).max(77).optional().describe("Token decimals (default 18)"),
           label: z.string().max(100).optional().describe("Human-readable label"),
           schemaId: z.string().optional().describe("EAS schema ID (bytes32 hex). Required for eas_attestation unless template is provided."),
           attester: z.string().optional().describe("Expected attester address (optional, for eas_attestation)"),
@@ -530,7 +529,6 @@ server.tool(
         enabled: z.boolean().describe("Enable or disable USDC payments"),
         evmAddress: z.string().optional().describe("EVM wallet for USDC (0x...)"),
         solanaAddress: z.string().optional().describe("Solana wallet for USDC"),
-        xrplAddress: z.string().optional().describe("XRPL wallet for USDC (r-address)"),
         preferredChainId: UsdcChainId.optional().describe("Preferred USDC chain"),
       })
       .nullable()

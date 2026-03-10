@@ -201,7 +201,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | Tool | Description |
 |------|-------------|
 | `insumer_credits` | Check credit balance and tier. |
-| `insumer_buy_credits` | Buy verification credits with USDC (25 credits / 1 USDC). |
+| `insumer_buy_credits` | Buy verification credits with USDC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. |
 | `insumer_confirm_payment` | Confirm USDC payment for a discount code. |
 
 ### Merchant Onboarding (owner-only)
@@ -214,7 +214,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_configure_nfts` | Set NFT collection discounts. |
 | `insumer_configure_settings` | Set discount mode, cap, USDC payments. |
 | `insumer_publish_directory` | Publish merchant to public directory. |
-| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. |
+| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. |
 
 ### Domain Verification (owner-only)
 
@@ -230,6 +230,18 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_acp_discount` | Check discount eligibility in OpenAI/Stripe ACP format. Returns coupon objects and per-item allocations. 1 merchant credit. |
 | `insumer_ucp_discount` | Check discount eligibility in Google UCP format. Returns title, extension field, and applied array. 1 merchant credit. |
 | `insumer_validate_code` | Validate an INSR-XXXXX discount code. Returns validity, discount percent, expiry. Free, no auth. |
+
+## Pricing
+
+**Tiers:** Free (10 credits) | Pro $9/mo (10,000/day) | Enterprise $29/mo (100,000/day)
+
+**USDC volume discounts:** $5–$99 = $0.04/call (25 credits/$1) · $100–$499 = $0.03 (33/$1, 25% off) · $500+ = $0.02 (50/$1, 50% off)
+
+**Platform wallets (USDC only):**
+- **EVM:** `0xAd982CB19aCCa2923Df8F687C0614a7700255a23`
+- **Solana:** `6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr`
+
+**Supported USDC chains:** Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. [Full pricing →](https://insumermodel.com/pricing/)
 
 ## Handling `rpc_failure` Errors
 

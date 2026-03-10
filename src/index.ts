@@ -397,7 +397,7 @@ server.tool(
 
 server.tool(
   "insumer_buy_credits",
-  "Buy verification credits with USDC. Rate: 25 credits per 1 USDC. Minimum: 5 USDC. Send USDC first, then provide the transaction hash.",
+  "Buy verification credits with USDC. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Only USDC accepted. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable.",
   {
     txHash: z.string().describe("USDC transaction hash"),
     chainId: UsdcChainId,
@@ -564,7 +564,7 @@ server.tool(
 
 server.tool(
   "insumer_buy_merchant_credits",
-  "Buy merchant verification credits with USDC. Rate: 25 credits per 1 USDC ($0.04/credit). Minimum: 5 USDC. Owner only.",
+  "Buy merchant verification credits with USDC. Volume discounts: $5–$99 = $0.04/call (25/$1), $100–$499 = $0.03 (33/$1), $500+ = $0.02 (50/$1). Minimum $5. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Only USDC accepted. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. Owner only.",
   {
     id: z.string().describe("Merchant ID"),
     txHash: z.string().describe("USDC transaction hash"),

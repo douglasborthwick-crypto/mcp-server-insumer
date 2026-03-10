@@ -201,7 +201,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | Tool | Description |
 |------|-------------|
 | `insumer_credits` | Check credit balance and tier. |
-| `insumer_buy_credits` | Buy verification credits with USDC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. |
+| `insumer_buy_credits` | Buy verification credits with USDC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 | `insumer_confirm_payment` | Confirm USDC payment for a discount code. |
 
 ### Merchant Onboarding (owner-only)
@@ -214,7 +214,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_configure_nfts` | Set NFT collection discounts. |
 | `insumer_configure_settings` | Set discount mode, cap, USDC payments. |
 | `insumer_publish_directory` | Publish merchant to public directory. |
-| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. |
+| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 
 ### Domain Verification (owner-only)
 

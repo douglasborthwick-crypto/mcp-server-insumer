@@ -116,7 +116,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.7.12",
+  version: "1.7.13",
 });
 
 // ============================================================
@@ -325,7 +325,12 @@ server.tool(
     if (args.limit !== undefined) params.set("limit", String(args.limit));
     if (args.offset !== undefined) params.set("offset", String(args.offset));
     const qs = params.toString();
-    const result = await apiCall("GET", `/merchants${qs ? `?${qs}` : ""}`);
+    const url = `${API_BASE}/merchants${qs ? `?${qs}` : ""}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+    const result = await res.json() as { ok: boolean; data?: unknown; error?: unknown; meta?: unknown };
     return formatResult(result);
   }
 );
@@ -337,7 +342,12 @@ server.tool(
     id: z.string().describe("Merchant ID"),
   },
   async (args) => {
-    const result = await apiCall("GET", `/merchants/${encodeURIComponent(args.id)}`);
+    const url = `${API_BASE}/merchants/${encodeURIComponent(args.id)}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+    const result = await res.json() as { ok: boolean; data?: unknown; error?: unknown; meta?: unknown };
     return formatResult(result);
   }
 );
@@ -356,7 +366,12 @@ server.tool(
     if (args.symbol) params.set("symbol", args.symbol);
     if (args.type) params.set("type", args.type);
     const qs = params.toString();
-    const result = await apiCall("GET", `/tokens${qs ? `?${qs}` : ""}`);
+    const url = `${API_BASE}/tokens${qs ? `?${qs}` : ""}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+    const result = await res.json() as { ok: boolean; data?: unknown; error?: unknown; meta?: unknown };
     return formatResult(result);
   }
 );
@@ -376,7 +391,12 @@ server.tool(
     if (args.wallet) params.set("wallet", args.wallet);
     if (args.solanaWallet) params.set("solanaWallet", args.solanaWallet);
     if (args.xrplWallet) params.set("xrplWallet", args.xrplWallet);
-    const result = await apiCall("GET", `/discount/check?${params.toString()}`);
+    const url = `${API_BASE}/discount/check?${params.toString()}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+    const result = await res.json() as { ok: boolean; data?: unknown; error?: unknown; meta?: unknown };
     return formatResult(result);
   }
 );

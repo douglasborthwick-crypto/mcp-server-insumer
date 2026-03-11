@@ -8,7 +8,7 @@ Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible clie
 
 **In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
 
-Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (25 tools, PyPI) | [langchain-community](https://github.com/langchain-ai/langchain/pull/549) (25 tools, PR #549) | [ElizaOS](https://www.npmjs.com/package/eliza-plugin-insumer) (3 actions, npm) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
+Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (26 tools, PyPI) | [langchain-community](https://github.com/langchain-ai/langchain/pull/549) (26 tools, PR #549) | [ElizaOS](https://www.npmjs.com/package/eliza-plugin-insumer) (10 actions, npm) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
 **[Full AI Agent Verification API guide](https://insumermodel.com/ai-agent-verification-api/)** — covers all 32 chains, trust profiles, commerce protocols, and signature verification.
 

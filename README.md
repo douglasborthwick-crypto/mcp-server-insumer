@@ -196,10 +196,11 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_list_tokens` | List all registered tokens and NFTs. Filter by chain, symbol, type. |
 | `insumer_check_discount` | Calculate discount for a wallet at a merchant. |
 
-### Credits
+### Credits & Keys
 
 | Tool | Description |
 |------|-------------|
+| `insumer_buy_key` | Buy a new API key with USDC (no auth required). Agent-friendly: no email needed, sender wallet becomes the key's identity. One key per wallet. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. |
 | `insumer_credits` | Check credit balance and tier. |
 | `insumer_buy_credits` | Buy verification credits with USDC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 | `insumer_confirm_payment` | Confirm USDC payment for a discount code. |

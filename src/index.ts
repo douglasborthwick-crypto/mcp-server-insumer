@@ -39,6 +39,25 @@ async function apiCall(
   }>;
 }
 
+async function publicApiCall(
+  method: string,
+  path: string,
+  body?: Record<string, unknown>
+): Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }> {
+  const url = `${API_BASE}${path}`;
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return res.json() as Promise<{
+    ok: boolean;
+    data?: unknown;
+    error?: unknown;
+    meta?: unknown;
+  }>;
+}
+
 function formatResult(result: {
   ok: boolean;
   data?: unknown;
@@ -411,6 +430,21 @@ server.tool(
   {},
   async () => {
     const result = await apiCall("GET", "/credits");
+    return formatResult(result);
+  }
+);
+
+server.tool(
+  "insumer_buy_key",
+  "Buy a new API key with USDC (no auth required). Agent-friendly: no email or prior API key needed. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr, then call this tool with the transaction hash. The sender wallet becomes the key's identity. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable.",
+  {
+    txHash: z.string().describe("USDC transaction hash"),
+    chainId: UsdcChainId,
+    amount: z.number().min(5).describe("USDC amount sent (minimum 5)"),
+    appName: z.string().max(100).describe("Name for the API key (e.g. your agent or app name)"),
+  },
+  async (args) => {
+    const result = await publicApiCall("POST", "/keys/buy", args);
     return formatResult(result);
   }
 );

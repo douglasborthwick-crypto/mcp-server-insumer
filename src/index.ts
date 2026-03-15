@@ -5,7 +5,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 
 const API_BASE = "https://api.insumermodel.com/v1";
-const KEYGEN_URL = "https://us-central1-insumer-merchant.cloudfunctions.net/createDeveloperApiKey";
+const KEYGEN_URL = "https://api.insumermodel.com/v1/keys/create";
 
 const apiKey = process.env.INSUMER_API_KEY ?? "";
 if (!apiKey) {

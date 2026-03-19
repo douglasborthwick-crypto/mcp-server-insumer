@@ -267,3 +267,7 @@ npx @modelcontextprotocol/inspector node build/index.js
 ## License
 
 MIT
+
+---
+
+If you find this useful, please star the repo — it helps others discover it.

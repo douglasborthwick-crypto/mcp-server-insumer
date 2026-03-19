@@ -75,7 +75,7 @@ When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
   "ok": true,
   "data": {
     "attestation": {
-      "id": "ATST-A7C3E",
+      "id": "ATST-A7C3E1B2D4F56789",
       "pass": true,
       "results": [
         {

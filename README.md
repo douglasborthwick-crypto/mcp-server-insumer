@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/mcp-server-insumer)](https://www.npmjs.com/package/mcp-server-insumer) [![Glama](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer/badge)](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for [The Insumer Model](https://insumermodel.com/developers/) — read-first blockchain verification infrastructure that returns ECDSA-signed, privacy-preserving booleans across 32 chains without exposing wallet balances or requiring trust in the API provider.
+MCP server for [The Insumer Model](https://insumermodel.com/developers/) — read-first blockchain verification infrastructure that returns ECDSA-signed, privacy-preserving booleans across 33 chains without exposing wallet balances or requiring trust in the API provider.
 
 Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants. Not a loyalty program. Not a reputation network. Not an identity system.
 
@@ -10,7 +10,7 @@ Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible clie
 
 Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (26 tools, PyPI) | [langchain-community](https://github.com/langchain-ai/langchain/pull/549) (26 tools, PR #549) | [ElizaOS](https://www.npmjs.com/package/eliza-plugin-insumer) (10 actions, npm) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
-**[Full AI Agent Verification API guide](https://insumermodel.com/ai-agent-verification-api/)** — covers all 32 chains, trust profiles, commerce protocols, and signature verification.
+**[Full AI Agent Verification API guide](https://insumermodel.com/ai-agent-verification-api/)** — covers all 33 chains, trust profiles, commerce protocols, and signature verification.
 
 ## Quick Start
 
@@ -183,7 +183,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 |------|-------------|
 | `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
-| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 17 base checks (up to 20 with optional Solana + XRPL) across stablecoins, governance, NFTs, staking, and cross-chain positions. 3 credits (6 with merkle). |
+| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 17 base checks (up to 21 with optional Solana, XRPL, and Bitcoin) across stablecoins, governance, NFTs, staking, and cross-chain positions. 3 credits (6 with merkle). |
 | `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet` and `xrplWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 merchant credit. |
 
@@ -250,9 +250,9 @@ If the API cannot reach one or more blockchain data sources after retries, endpo
 
 **Important:** `rpc_failure` is NOT a verification failure. Do not treat it as `pass: false`. It means the data source was temporarily unavailable and the API refused to sign an unverified result.
 
-## Supported Chains (32)
+## Supported Chains (33)
 
-30 EVM chains + Solana + XRP Ledger. Includes Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, and 23 more. [Full list →](https://insumermodel.com/developers/api-reference/)
+30 EVM chains + Solana + XRP Ledger + Bitcoin. Includes Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, and 23 more. [Full list →](https://insumermodel.com/developers/api-reference/)
 
 ## Development
 

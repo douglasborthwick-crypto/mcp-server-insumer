@@ -82,8 +82,9 @@ const ChainId = z
     z.number().int().describe("EVM chain ID"),
     z.literal("solana"),
     z.literal("xrpl"),
+    z.literal("bitcoin"),
   ])
-  .describe("Chain identifier: EVM chain ID (integer), 'solana', or 'xrpl'");
+  .describe("Chain identifier: EVM chain ID (integer), 'solana', 'xrpl', or 'bitcoin'");
 
 const OnboardingChainId = z
   .union([
@@ -94,8 +95,9 @@ const OnboardingChainId = z
     ),
     z.literal("solana"),
     z.literal("xrpl"),
+    z.literal("bitcoin"),
   ])
-  .describe("Onboarding chain: any supported EVM chain ID (1, 56, 8453, 43114, 137, 42161, 10, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139, 88888, 1868, 98866, 480), 'solana', or 'xrpl'");
+  .describe("Onboarding chain: any supported EVM chain ID (1, 56, 8453, 43114, 137, 42161, 10, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139, 88888, 1868, 98866, 480), 'solana', 'xrpl', or 'bitcoin'");
 
 const UsdcChainId = z
   .union([
@@ -135,7 +137,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.8.6",
+  version: "1.9.0",
 });
 
 // ============================================================
@@ -211,11 +213,12 @@ server.tool(
 
 server.tool(
   "insumer_attest",
-  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 32 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). XRPL results include ledgerIndex and ledgerHash (validated ledger hash) instead of blockNumber/blockTimestamp; trust line token results also include trustLineState: { frozen: boolean } (frozen trust lines cause met: false). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits). For EAS attestations, use a compliance template (Coinbase Verifications, Gitcoin Passport) or raw schemaId. For Farcaster, use type 'farcaster_id' (checks IdRegistry on Optimism). Use insumer_compliance_templates to list available templates.",
+  "Create on-chain verification (attestation). Verify 1-10 conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 33 chains. Returns ECDSA-signed boolean results with a kid field identifying the signing key (fetch public key via insumer_jwks). Never exposes actual balances. Each result includes evaluatedCondition (exact logic checked), conditionHash (SHA-256 for tamper-evidence), and blockNumber/blockTimestamp for RPC chains (freshness). XRPL results include ledgerIndex and ledgerHash (validated ledger hash) instead of blockNumber/blockTimestamp; trust line token results also include trustLineState: { frozen: boolean } (frozen trust lines cause met: false). Standard mode costs 1 credit. Pass proof: 'merkle' for EIP-1186 Merkle storage proofs (2 credits). For EAS attestations, use a compliance template (Coinbase Verifications, Gitcoin Passport) or raw schemaId. For Farcaster, use type 'farcaster_id' (checks IdRegistry on Optimism). Use insumer_compliance_templates to list available templates.",
   {
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address). For verifying XRP, trust line tokens (RLUSD, USDC), or NFTs on XRP Ledger."),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot). For verifying native BTC balance. Use chainId 'bitcoin' with contractAddress 'native'."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Proofs available for token_balance on RPC chains only."),
     format: z.enum(["jwt"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json."),
     conditions: z
@@ -262,11 +265,12 @@ server.tool(
 
 server.tool(
   "insumer_wallet_trust",
-  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 17 base checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Up to 20 checks with optional Solana and XRPL wallets. Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
+  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 17 base checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Up to 21 checks with optional Solana, XRPL, and Bitcoin wallets. Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana check."),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address). If provided, adds RLUSD and USDC on XRPL checks."),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address. If provided, adds Bitcoin Holdings dimension (native BTC balance check)."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs on stablecoin/governance checks (6 credits)."),
   },
   async (args) => {
@@ -291,6 +295,10 @@ server.tool(
             .string()
             .optional()
             .describe("XRPL wallet address (r-address). Adds RLUSD and USDC on XRPL checks."),
+          bitcoinWallet: z
+            .string()
+            .optional()
+            .describe("Bitcoin address. Adds Bitcoin Holdings dimension."),
         })
       )
       .min(1)
@@ -317,6 +325,7 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
   },
   async (args) => {
     const result = await apiCall("POST", "/verify", args);
@@ -375,7 +384,7 @@ server.tool(
   "insumer_list_tokens",
   "List all registered tokens and NFT collections in the Insumer registry. Filter by chain, symbol, or asset type.",
   {
-    chain: z.union([z.number().int(), z.literal("solana"), z.literal("xrpl")]).optional().describe("Filter by chain ID"),
+    chain: z.union([z.number().int(), z.literal("solana"), z.literal("xrpl"), z.literal("bitcoin")]).optional().describe("Filter by chain ID"),
     symbol: z.string().optional().describe("Filter by token symbol"),
     type: z.enum(["token", "nft"]).optional().describe("Filter by asset type"),
   },
@@ -403,6 +412,7 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
   },
   async (args) => {
     const params = new URLSearchParams();
@@ -410,6 +420,7 @@ server.tool(
     if (args.wallet) params.set("wallet", args.wallet);
     if (args.solanaWallet) params.set("solanaWallet", args.solanaWallet);
     if (args.xrplWallet) params.set("xrplWallet", args.xrplWallet);
+    if (args.bitcoinWallet) params.set("bitcoinWallet", args.bitcoinWallet);
     const url = `${API_BASE}/discount/check?${params.toString()}`;
     const res = await fetch(url, {
       method: "GET",
@@ -687,6 +698,7 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
     items: z
       .array(
         z.object({
@@ -711,6 +723,7 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
+    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
     items: z
       .array(
         z.object({

@@ -104,11 +104,12 @@ const UsdcChainId = z
     z.enum(["1", "8453", "137", "42161", "10", "56", "43114"]).transform(Number),
     z.number().int().refine(
       (n) => [1, 8453, 137, 42161, 10, 56, 43114].includes(n),
-      "Must be a supported USDC chain"
+      "Must be a supported payment chain"
     ),
     z.literal("solana"),
+    z.literal("bitcoin"),
   ])
-  .describe("USDC chain: 1, 8453, 137, 42161, 10, 56, 43114, or 'solana'");
+  .describe("Payment chain: 1, 8453, 137, 42161, 10, 56, 43114, 'solana', or 'bitcoin'. EVM/Solana accept USDC and USDT (auto-detected). Bitcoin accepts BTC (converted to USD at market rate).");
 
 const TierSchema = z.object({
   name: z.string().max(30).describe("Tier name, e.g. 'Gold', 'Silver'"),
@@ -447,11 +448,11 @@ server.tool(
 
 server.tool(
   "insumer_buy_key",
-  "Buy a new API key with USDC (no auth required). Agent-friendly: no email or prior API key needed. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr, then call this tool with the transaction hash. The sender wallet becomes the key's identity. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable.",
+  "Buy a new API key with USDC, USDT, or BTC (no auth required). Agent-friendly: no email needed. Send USDC/USDT to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Send BTC to bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0 (1 confirmation required). USDC/USDT auto-detected from transaction. BTC converted to USD at market rate. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Non-refundable.",
   {
-    txHash: z.string().describe("USDC transaction hash"),
+    txHash: z.string().describe("Transaction hash proving payment"),
     chainId: UsdcChainId,
-    amount: z.number().min(5).describe("USDC amount sent (minimum 5)"),
+    amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC — USD value derived from on-chain amount at market rate."),
     appName: z.string().max(100).describe("Name for the API key (e.g. your agent or app name)"),
   },
   async (args) => {
@@ -462,11 +463,11 @@ server.tool(
 
 server.tool(
   "insumer_buy_credits",
-  "Buy verification credits with USDC. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Only USDC accepted. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true — the verified USDC transfer from the new address proves ownership.",
+  "Buy verification credits with USDC, USDT, or BTC. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Crypto sent on unsupported chains cannot be recovered. Non-refundable. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true.",
   {
-    txHash: z.string().describe("USDC transaction hash"),
+    txHash: z.string().describe("Transaction hash proving payment"),
     chainId: UsdcChainId,
-    amount: z.number().min(5).describe("USDC amount sent (minimum 5)"),
+    amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC."),
     updateWallet: z.boolean().optional().default(false).describe("Set true to update the registered sender wallet to this transaction's sender"),
   },
   async (args) => {
@@ -477,12 +478,12 @@ server.tool(
 
 server.tool(
   "insumer_confirm_payment",
-  "Confirm USDC payment for a discount code. After calling insumer_verify, confirm that the USDC payment was made on-chain. The server verifies the transaction receipt.",
+  "Confirm stablecoin payment for a discount code. After calling insumer_verify, confirm that the USDC/USDT payment was made on-chain. The server verifies the transaction receipt.",
   {
     code: z.string().describe("Verification code from insumer_verify (e.g. INSR-A7K3M)"),
     txHash: z.string().describe("On-chain transaction hash or Solana signature"),
     chainId: UsdcChainId,
-    amount: z.union([z.string(), z.number()]).describe("USDC amount sent"),
+    amount: z.union([z.string(), z.number()]).describe("Stablecoin amount sent"),
   },
   async (args) => {
     const result = await apiCall("POST", "/payment/confirm", args);
@@ -515,7 +516,7 @@ server.tool(
 
 server.tool(
   "insumer_merchant_status",
-  "Get full private merchant details: credits, token configs, NFT collections, directory status, verification status, USDC settings. Owner only.",
+  "Get full private merchant details: credits, token configs, NFT collections, directory status, verification status, payment settings. Owner only.",
   {
     id: z.string().describe("Merchant ID"),
   },
@@ -576,7 +577,7 @@ server.tool(
 
 server.tool(
   "insumer_configure_settings",
-  "Update merchant settings: discount stacking mode, cap, and USDC payment configuration. All fields optional. Owner only.",
+  "Update merchant settings: discount stacking mode, cap, and stablecoin payment configuration. All fields optional. Owner only.",
   {
     id: z.string().describe("Merchant ID"),
     discountMode: z
@@ -630,12 +631,12 @@ server.tool(
 
 server.tool(
   "insumer_buy_merchant_credits",
-  "Buy merchant verification credits with USDC. Volume discounts: $5–$99 = $0.04/call (25/$1), $100–$499 = $0.03 (33/$1), $500+ = $0.02 (50/$1). Minimum $5. Send USDC to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Only USDC accepted. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. Owner only. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true.",
+  "Buy merchant verification credits with USDC, USDT, or BTC. Volume discounts: $5–$99 = $0.04/call (25/$1), $100–$499 = $0.03 (33/$1), $500+ = $0.02 (50/$1). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Non-refundable. Owner only. First purchase registers the sender wallet to the API key. To change the registered wallet, set updateWallet to true.",
   {
     id: z.string().describe("Merchant ID"),
-    txHash: z.string().describe("USDC transaction hash"),
+    txHash: z.string().describe("Transaction hash proving payment"),
     chainId: UsdcChainId,
-    amount: z.number().min(5).describe("USDC amount sent (minimum 5)"),
+    amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC."),
     updateWallet: z.boolean().optional().default(false).describe("Set true to update the registered sender wallet"),
   },
   async (args) => {

@@ -55,7 +55,7 @@ Add to your MCP settings:
 **Option B — Terminal (no browser needed):**
 
 ```bash
-curl -s -X POST https://us-central1-insumer-merchant.cloudfunctions.net/createDeveloperApiKey \
+curl -s -X POST https://api.insumermodel.com/v1/keys/create \
   -H "Content-Type: application/json" \
   -d '{"email": "you@example.com", "appName": "MCP Server", "tier": "free"}' | jq .
 ```

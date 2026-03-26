@@ -266,7 +266,7 @@ server.tool(
 
 server.tool(
   "insumer_wallet_trust",
-  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 17 base checks across stablecoins (USDC on 7 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Up to 21 checks with optional Solana, XRPL, and Bitcoin wallets. Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
+  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 36 base checks across stablecoins (USDC + USDT across 21 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), and staking positions (stETH, rETH, cbETH). Up to 40 checks across 24 chains with optional Solana, XRPL, and Bitcoin wallets. Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana check."),
@@ -326,7 +326,6 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
-    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
   },
   async (args) => {
     const result = await apiCall("POST", "/verify", args);
@@ -413,7 +412,6 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
-    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
   },
   async (args) => {
     const params = new URLSearchParams();
@@ -421,7 +419,6 @@ server.tool(
     if (args.wallet) params.set("wallet", args.wallet);
     if (args.solanaWallet) params.set("solanaWallet", args.solanaWallet);
     if (args.xrplWallet) params.set("xrplWallet", args.xrplWallet);
-    if (args.bitcoinWallet) params.set("bitcoinWallet", args.bitcoinWallet);
     const url = `${API_BASE}/discount/check?${params.toString()}`;
     const res = await fetch(url, {
       method: "GET",
@@ -699,7 +696,6 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
-    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
     items: z
       .array(
         z.object({
@@ -724,7 +720,6 @@ server.tool(
     wallet: z.string().optional().describe("EVM wallet address (0x...)"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58)"),
     xrplWallet: z.string().optional().describe("XRPL wallet address (r-address)"),
-    bitcoinWallet: z.string().optional().describe("Bitcoin address (P2PKH, P2SH, bech32, or Taproot)"),
     items: z
       .array(
         z.object({

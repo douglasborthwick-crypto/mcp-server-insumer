@@ -2,9 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/mcp-server-insumer)](https://www.npmjs.com/package/mcp-server-insumer) [![Glama](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer/badge)](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for [The Insumer Model](https://insumermodel.com/developers/) — read-first blockchain verification infrastructure that returns ECDSA-signed, privacy-preserving booleans across 33 chains without exposing wallet balances or requiring trust in the API provider.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) — wallet auth infrastructure that returns ECDSA-signed, privacy-preserving booleans across 33 chains without exposing wallet balances or requiring trust in the API provider.
 
-Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to autonomously verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants. Not a loyalty program. Not a reputation network. Not an identity system.
+Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to add wallet auth to any workflow — verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
 
 **In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
 
@@ -57,10 +57,10 @@ Add to your MCP settings:
 ```bash
 curl -s -X POST https://api.insumermodel.com/v1/keys/create \
   -H "Content-Type: application/json" \
-  -d '{"email": "you@example.com", "appName": "MCP Server", "tier": "free"}' | jq .
+  -d '{"email": "you@example.com", "appName": "MCP Server", "tier": "free"}'
 ```
 
-Returns an `insr_live_...` key with 10 credits and 100 calls/day. One free key per email.
+Returns an `insr_live_...` key with 100 reads/day and 10 verification credits. One free key per email.
 
 **Option C — Browser:** Go to [insumermodel.com/developers](https://insumermodel.com/developers/#pricing) and generate a free key instantly.
 
@@ -92,9 +92,9 @@ When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
             "threshold": 1000,
             "type": "token_balance"
           },
-          "conditionHash": "0x8a3b...",
-          "blockNumber": "0x129e3f7",
-          "blockTimestamp": "2026-02-28T12:34:56.000Z"
+          "conditionHash": "0x554251734232c8b43062f1cf2bb51b76650d13268104d74c645f4893e67ef69c",
+          "blockNumber": "0x1799043",
+          "blockTimestamp": "2026-03-26T20:04:23.000Z"
         }
       ],
       "passCount": 1,
@@ -102,14 +102,14 @@ When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
       "attestedAt": "2026-02-28T12:34:57.000Z",
       "expiresAt": "2026-02-28T13:04:57.000Z"
     },
-    "sig": "MEUCIQD...(base64 ECDSA signature)...",
+    "sig": "dmNJKqnGZ9f47qpWax9gxgw1DhUKHKHrbLspTop8NWzYhv2fNpVAt1gAuhUfU4xPsgXTCdrmTXI4vEE50dcfEA==",
     "kid": "insumer-attest-v1"
   },
   "meta": {
     "version": "1.0",
     "timestamp": "2026-02-28T12:34:57.000Z",
-    "creditsCharged": 1,
-    "creditsRemaining": 99
+    "creditsRemaining": 99,
+    "creditsCharged": 1
   }
 }
 ```
@@ -163,7 +163,7 @@ if (result.valid) {
 
 This runs 4 independent checks: ECDSA signature, condition hash integrity, block freshness, and attestation expiry. Zero runtime dependencies, uses Web Crypto API.
 
-## Tools (26)
+## Tools (27)
 
 ### Setup (free, no auth)
 
@@ -183,7 +183,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 |------|-------------|
 | `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
-| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 17 base checks (up to 21 with optional Solana, XRPL, and Bitcoin) across stablecoins, governance, NFTs, staking, and cross-chain positions. 3 credits (6 with merkle). |
+| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 36 base checks (up to 40 with optional Solana, XRPL, and Bitcoin) across 24 chains covering stablecoins, governance, NFTs, staking, and cross-chain positions. 3 credits (6 with merkle). |
 | `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet` and `xrplWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 merchant credit. |
 
@@ -200,9 +200,9 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 | Tool | Description |
 |------|-------------|
-| `insumer_buy_key` | Buy a new API key with USDC (no auth required). Agent-friendly: no email needed, sender wallet becomes the key's identity. One key per wallet. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. |
+| `insumer_buy_key` | Buy a new API key with USDC, USDT, or BTC (no auth required). Agent-friendly: no email needed, sender wallet becomes the key's identity. One key per wallet. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable. |
 | `insumer_credits` | Check credit balance and tier. |
-| `insumer_buy_credits` | Buy verification credits with USDC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
+| `insumer_buy_credits` | Buy verification credits with USDC, USDT, or BTC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 | `insumer_confirm_payment` | Confirm USDC payment for a discount code. |
 
 ### Merchant Onboarding (owner-only)
@@ -215,7 +215,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_configure_nfts` | Set NFT collection discounts. |
 | `insumer_configure_settings` | Set discount mode, cap, USDC payments. |
 | `insumer_publish_directory` | Publish merchant to public directory. |
-| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
+| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC, USDT, or BTC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 
 ### Domain Verification (owner-only)
 
@@ -234,15 +234,16 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 ## Pricing
 
-**Tiers:** Free (10 credits) | Pro $9/mo (10,000/day) | Enterprise $29/mo (100,000/day)
+**Tiers:** Free (100 reads/day, 10 credits) | Pro $9/mo (10,000/day) | Enterprise $29/mo (100,000/day)
 
-**USDC volume discounts:** $5–$99 = $0.04/call (25 credits/$1) · $100–$499 = $0.03 (33/$1, 25% off) · $500+ = $0.02 (50/$1, 50% off)
+**Volume discounts:** $5–$99 = $0.04/call (25 credits/$1) · $100–$499 = $0.03 (33/$1, 25% off) · $500+ = $0.02 (50/$1, 50% off)
 
-**Platform wallets (USDC only):**
-- **EVM:** `0xAd982CB19aCCa2923Df8F687C0614a7700255a23`
-- **Solana:** `6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr`
+**Platform wallets:**
+- **EVM (USDC/USDT):** `0xAd982CB19aCCa2923Df8F687C0614a7700255a23`
+- **Solana (USDC/USDT):** `6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr`
+- **Bitcoin:** `bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0`
 
-**Supported USDC chains:** Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. USDC sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. [Full pricing →](https://insumermodel.com/pricing/)
+**Supported payment chains:** Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Tokens sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. [Full pricing →](https://insumermodel.com/pricing/)
 
 ## Handling `rpc_failure` Errors
 
@@ -269,5 +270,3 @@ npx @modelcontextprotocol/inspector node build/index.js
 MIT
 
 ---
-
-If you find this useful, please star the repo — it helps others discover it.

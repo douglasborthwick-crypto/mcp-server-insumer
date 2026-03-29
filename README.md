@@ -2,9 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/mcp-server-insumer)](https://www.npmjs.com/package/mcp-server-insumer) [![Glama](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer/badge)](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for [InsumerAPI](https://insumermodel.com/developers/) — wallet auth infrastructure that returns ECDSA-signed, privacy-preserving booleans across 33 chains without exposing wallet balances or requiring trust in the API provider.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) — condition-based access infrastructure. Send a wallet and conditions, get a signed boolean across 33 chains. No balances exposed, no identity required, no trust in the API provider needed.
 
-Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to add wallet auth to any workflow — verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
+Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to add condition-based access to any workflow — verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
 
 **In production:** [DJD Agent Score](https://github.com/jacobsd32-cpu/djdagentscore) (Coinbase x402 ecosystem) uses InsumerAPI for AI agent wallet trust scoring. [Case study](https://insumermodel.com/blog/djd-agent-score-insumer-api-integration.html).
 

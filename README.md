@@ -66,6 +66,10 @@ Returns an `insr_live_...` key with 100 reads/day and 10 verification credits. O
 
 Set it as `INSUMER_API_KEY` in your config.
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/douglasborthwick-crypto-mcp-server-insumer).
+
 ## What You Get Back
 
 When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:

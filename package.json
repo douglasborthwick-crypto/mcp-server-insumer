@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-insumer",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "MCP server for InsumerAPI — condition-based access infrastructure. Send a wallet and conditions, get a signed boolean across 33 chains. 26 tools: attestation, wallet trust profiles (40 checks across 24 chains incl. Solana, XRPL, Bitcoin), compliance templates, ACP/UCP commerce, Merkle proofs, crypto key purchase (USDC/USDT/BTC), instant API key setup. No balances exposed, no identity required.",
   "license": "MIT",
   "author": "Douglas Borthwick",

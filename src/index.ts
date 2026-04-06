@@ -88,18 +88,29 @@ const ChainId = z
 
 const OnboardingChainId = z
   .union([
-    z.enum(["1", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866", "480", "146", "100", "5000", "534352", "59144", "324", "81457", "42220", "1284", "204", "130", "57073", "1329", "80094", "33139"]).transform(Number),
+    z.enum(["1", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866", "480", "146", "100", "5000", "534352", "59144", "324", "81457", "42220", "1284", "204", "130", "57073", "1329", "80094", "33139", "167000", "2020", "1285", "88"]).transform(Number),
     z.number().int().refine(
-      (n) => [1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139].includes(n),
+      (n) => [1, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139, 167000, 2020, 1285, 88].includes(n),
       "Must be a supported onboarding chain"
     ),
     z.literal("solana"),
     z.literal("xrpl"),
     z.literal("bitcoin"),
   ])
-  .describe("Onboarding chain: any supported EVM chain ID (1, 56, 8453, 43114, 137, 42161, 10, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139, 88888, 1868, 98866, 480), 'solana', 'xrpl', or 'bitcoin'");
+  .describe("Onboarding chain: any supported EVM chain ID (1, 56, 8453, 43114, 137, 42161, 10, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 1284, 204, 130, 57073, 1329, 80094, 33139, 88888, 1868, 98866, 480, 167000, 2020, 1285, 88), 'solana', 'xrpl', or 'bitcoin'");
 
 const UsdcChainId = z
+  .union([
+    z.enum(["1", "8453", "137", "42161", "10", "56", "43114"]).transform(Number),
+    z.number().int().refine(
+      (n) => [1, 8453, 137, 42161, 10, 56, 43114].includes(n),
+      "Must be a supported payment chain"
+    ),
+    z.literal("solana"),
+  ])
+  .describe("Payment chain: EVM chain ID (1, 8453, 137, 42161, 10, 56, 43114) or 'solana'");
+
+const UsdcChainIdWithBitcoin = z
   .union([
     z.enum(["1", "8453", "137", "42161", "10", "56", "43114"]).transform(Number),
     z.number().int().refine(
@@ -448,7 +459,7 @@ server.tool(
   "Buy a new API key with USDC, USDT, or BTC (no auth required). Agent-friendly: no email needed. Send USDC/USDT to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Send BTC to bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0 (1 confirmation required). USDC/USDT auto-detected from transaction. BTC converted to USD at market rate. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Non-refundable.",
   {
     txHash: z.string().describe("Transaction hash proving payment"),
-    chainId: UsdcChainId,
+    chainId: UsdcChainIdWithBitcoin,
     amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC — USD value derived from on-chain amount at market rate."),
     appName: z.string().max(100).describe("Name for the API key (e.g. your agent or app name)"),
   },
@@ -463,7 +474,7 @@ server.tool(
   "Buy verification credits with USDC, USDT, or BTC. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Crypto sent on unsupported chains cannot be recovered. Non-refundable. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true.",
   {
     txHash: z.string().describe("Transaction hash proving payment"),
-    chainId: UsdcChainId,
+    chainId: UsdcChainIdWithBitcoin,
     amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC."),
     updateWallet: z.boolean().optional().default(false).describe("Set true to update the registered sender wallet to this transaction's sender"),
   },
@@ -578,9 +589,9 @@ server.tool(
   {
     id: z.string().describe("Merchant ID"),
     discountMode: z
-      .enum(["highest", "stack"])
+      .enum(["highest", "stack", "capped"])
       .optional()
-      .describe("'highest' uses best single discount, 'stack' adds them together"),
+      .describe("'highest' uses best single discount, 'stack' adds them together, 'capped' stacks up to discountCap"),
     discountCap: z
       .number()
       .int()
@@ -632,7 +643,7 @@ server.tool(
   {
     id: z.string().describe("Merchant ID"),
     txHash: z.string().describe("Transaction hash proving payment"),
-    chainId: UsdcChainId,
+    chainId: UsdcChainIdWithBitcoin,
     amount: z.number().min(5).optional().describe("Stablecoin amount sent (minimum 5). Not required for BTC."),
     updateWallet: z.boolean().optional().default(false).describe("Set true to update the registered sender wallet"),
   },

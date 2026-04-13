@@ -255,6 +255,14 @@ If the API cannot reach one or more blockchain data sources after retries, endpo
 
 30 EVM chains + Solana + XRP Ledger + Bitcoin. Includes Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, and 23 more. [Full list →](https://insumermodel.com/developers/api-reference/)
 
+## Also Available As
+
+- **Claude Code Skill:** `smithery skill add douglasborthwick/insumer-skill` ([Smithery](https://smithery.ai/skills/douglasborthwick/insumer-skill) · [GitHub](https://github.com/douglasborthwick-crypto/insumer-skill)) — for *writing* wallet auth into your own projects from inside Claude Code. This MCP server gives an agent runtime access to the API; insumer-skill helps developers author integration code at build time. Different surfaces, same primitive.
+- **ElizaOS Plugin:** `@insumermodel/plugin-eliza` ([npm](https://www.npmjs.com/package/@insumermodel/plugin-eliza))
+- **LangChain (Python):** `pip install langchain-insumer` ([PyPI](https://pypi.org/project/langchain-insumer/))
+- **OpenAI GPT:** [GPT Store](https://chatgpt.com/g/g-67bf98eb32dc8191a4051de54f7e2c6e-insumer-api-assistant)
+- **Verifier (offline JWKS):** `npm install insumer-verify` ([npm](https://www.npmjs.com/package/insumer-verify))
+
 ## Development
 
 ```bash

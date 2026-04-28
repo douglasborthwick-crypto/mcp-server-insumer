@@ -1,6 +1,6 @@
 ---
 name: insumer-verify
-description: Privacy-preserving on-chain token verification across 32 blockchains. Verify wallet holdings with ECDSA-signed proofs — no balances exposed.
+description: Privacy-preserving on-chain verification across 33 blockchains (incl. Bitcoin). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
 homepage: https://insumermodel.com/developers/
 metadata:
   clawdbot:
@@ -12,9 +12,9 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 32 blockchains (30 EVM + Solana + XRPL). Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 33 blockchains (30 EVM + Solana + XRPL + Bitcoin). Returns ECDSA-signed boolean results — no raw balances exposed.
 
-**Version**: 1.8.5
+**Version**: 1.9.7
 
 ## Overview
 
@@ -27,7 +27,7 @@ Agents can:
 - Generate wallet trust fact profiles (single or batch)
 - Discover merchants and generate signed discount codes
 - Onboard and configure merchants end-to-end
-- Buy API keys and credits with USDC (no auth required)
+- Buy API keys and credits with USDC, USDT, or BTC (no auth required)
 - Integrate with ACP (OpenAI/Stripe) and UCP (Google) commerce protocols
 
 ## Setup
@@ -55,7 +55,7 @@ export INSUMER_API_KEY="insr_live_..."
 }
 ```
 
-## Tools (26)
+## Tools (27)
 
 ### Setup (free, no auth)
 
@@ -69,17 +69,17 @@ Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key (RFC 7517). 
 
 ### On-Chain Verification
 
-#### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, conditions, proof?, format?)`
-Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 32 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs). Optional `format: "jwt"` for ES256-signed JWT output.
+#### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, bitcoinWallet?, conditions, proof?, format?)`
+Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 33 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on 27 of 30 EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
 
 #### `insumer_compliance_templates()`
-List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.
+List available EAS compliance templates (Coinbase Verified Account/Country/One on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.
 
-#### `insumer_wallet_trust(wallet, solanaWallet?, xrplWallet?, proof?)`
-Generate an ECDSA-signed wallet trust fact profile. 17 base checks (up to 20 with Solana + XRPL) across stablecoins, governance tokens, NFTs, and staking. 3 credits (6 with merkle).
+#### `insumer_wallet_trust(wallet, solanaWallet?, xrplWallet?, bitcoinWallet?, proof?)`
+Generate an ECDSA-signed wallet trust fact profile. 36 base checks across 21 chains spanning stablecoins (USDC + USDT), governance, NFTs, and staking — up to 40 total with optional Solana USDC, XRPL stablecoins (RLUSD + USDC), and Bitcoin holdings. 3 credits (6 with merkle).
 
 #### `insumer_batch_wallet_trust(wallets, proof?)`
-Batch trust profiles for up to 10 wallets. Shared block fetches, 5-8x faster than sequential calls. Partial success supported. 3 credits/wallet (6 with merkle).
+Batch trust profiles for up to 10 wallets (each accepts `wallet`, `solanaWallet`, `xrplWallet`, `bitcoinWallet`). Shared block fetches, 5-8x faster than sequential calls. Partial success supported. 3 credits/wallet (6 with merkle).
 
 #### `insumer_verify(merchantId, wallet?, solanaWallet?, xrplWallet?)`
 Create a signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. Returns tier and discount percentage. 1 merchant credit.
@@ -104,13 +104,13 @@ Calculate discount for a wallet at a merchant. Returns tier and discount percent
 Check verification credit balance, tier (free/pro/enterprise), and daily rate limit for the current API key.
 
 #### `insumer_buy_key(txHash, chainId, amount, appName)`
-Buy a new API key with USDC (no auth required). Send USDC, then call with the transaction hash. Sender wallet becomes the key's identity. One key per wallet. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Minimum $5. Non-refundable.
+Buy a new API key with USDC, USDT, or BTC (no auth required). Send the payment, then call with the transaction hash. Sender wallet becomes the key's identity. One key per wallet. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. USDC/USDT auto-detected on EVM and Solana; BTC converted to USD at market rate (1 confirmation). Minimum $5. Non-refundable.
 
 #### `insumer_buy_credits(txHash, chainId, amount, updateWallet?)`
-Buy verification credits with USDC. Volume discounts: $5-$99 = $0.04/call, $100-$499 = $0.03, $500+ = $0.02. Minimum $5. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana. Non-refundable.
+Buy verification credits with USDC, USDT, or BTC. Volume discounts: $5-$99 = $0.04/call, $100-$499 = $0.03, $500+ = $0.02. Minimum $5. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable.
 
 #### `insumer_confirm_payment(code, txHash, chainId, amount)`
-Confirm USDC payment for a discount code. After calling `insumer_verify`, confirm the on-chain USDC payment. The server verifies the transaction receipt.
+Confirm USDC or USDT payment for a discount code. After calling `insumer_verify`, confirm the on-chain payment. The server verifies the transaction receipt. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana.
 
 ### Merchant Onboarding (owner-only)
 
@@ -127,13 +127,13 @@ Configure merchant token discount tiers. Set own token and/or partner tokens. Ma
 Configure NFT collections that grant discounts. Max 4 collections.
 
 #### `insumer_configure_settings(id, discountMode?, discountCap?, usdcPayment?)`
-Update merchant settings: discount stacking mode (highest/stack), cap, and USDC payment configuration.
+Update merchant settings: discount stacking mode (highest/stack/capped), cap, and USDC payment configuration.
 
 #### `insumer_publish_directory(id)`
 Publish (or refresh) the merchant's listing in the public directory.
 
 #### `insumer_buy_merchant_credits(id, txHash, chainId, amount, updateWallet?)`
-Buy merchant verification credits with USDC. Same volume discounts as `insumer_buy_credits`.
+Buy merchant verification credits with USDC, USDT, or BTC. Same chain support and volume discounts as `insumer_buy_credits`.
 
 ### Domain Verification (owner-only)
 
@@ -154,9 +154,9 @@ Check discount eligibility in Google Universal Commerce Protocol (UCP) format. R
 #### `insumer_validate_code(code)`
 Validate an INSR-XXXXX discount code. Returns validity, discount percent, and expiry. Free, no auth required.
 
-## Supported Chains (32)
+## Supported Chains (33)
 
-Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL.
+Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL, Bitcoin.
 
 ## Security Model
 

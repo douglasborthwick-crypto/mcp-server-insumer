@@ -1,6 +1,6 @@
 ---
 name: insumer-verify
-description: Privacy-preserving on-chain verification across 33 blockchains (incl. Bitcoin). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
+description: Privacy-preserving on-chain verification across 37 blockchains (incl. Bitcoin, Tron, Stellar, Sui). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
 homepage: https://insumermodel.com/developers/
 metadata:
   clawdbot:
@@ -12,9 +12,9 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 33 blockchains (30 EVM + Solana + XRPL + Bitcoin). Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 37 blockchains (31 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
 
-**Version**: 1.9.7
+**Version**: 1.10.0
 
 ## Overview
 
@@ -69,19 +69,19 @@ Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key (RFC 7517). 
 
 ### On-Chain Verification
 
-#### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, bitcoinWallet?, conditions, proof?, format?)`
-Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 33 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on 27 of 30 EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
+#### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, bitcoinWallet?, tronWallet?, stellarWallet?, suiWallet?, conditions, proof?, format?)`
+Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 37 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. Stellar results include `ledgerIndex`/`ledgerHash` and surface `assetCode` (which flows into conditionHash for non-native assets). Sui results include `checkpointSequence`/`checkpointDigest`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on supported EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
 
 #### `insumer_compliance_templates()`
 List available EAS compliance templates (Coinbase Verified Account/Country/One on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.
 
-#### `insumer_wallet_trust(wallet, solanaWallet?, xrplWallet?, bitcoinWallet?, proof?)`
-Generate an ECDSA-signed wallet trust fact profile. 36 base checks across 21 chains spanning stablecoins (USDC + USDT), governance, NFTs, and staking — up to 40 total with optional Solana USDC, XRPL stablecoins (RLUSD + USDC), and Bitcoin holdings. 3 credits (6 with merkle).
+#### `insumer_wallet_trust(wallet, solanaWallet?, xrplWallet?, bitcoinWallet?, tronWallet?, stellarWallet?, suiWallet?, proof?)`
+Generate an ECDSA-signed wallet trust fact profile. 38 base checks across 21 chains spanning stablecoins (USDC + USDT), governance, NFTs, staking, and institutional stablecoins — up to 49 total with optional Solana, XRPL, Bitcoin, Tron, Stellar, and Sui wallets. 3 credits (6 with merkle).
 
 #### `insumer_batch_wallet_trust(wallets, proof?)`
-Batch trust profiles for up to 10 wallets (each accepts `wallet`, `solanaWallet`, `xrplWallet`, `bitcoinWallet`). Shared block fetches, 5-8x faster than sequential calls. Partial success supported. 3 credits/wallet (6 with merkle).
+Batch trust profiles for up to 10 wallets (each accepts `wallet`, `solanaWallet`, `xrplWallet`, `bitcoinWallet`, `tronWallet`, `stellarWallet`, `suiWallet`). Shared block fetches, 5-8x faster than sequential calls. Partial success supported. 3 credits/wallet (6 with merkle).
 
-#### `insumer_verify(merchantId, wallet?, solanaWallet?, xrplWallet?)`
+#### `insumer_verify(merchantId, wallet?, solanaWallet?, xrplWallet?, tronWallet?, stellarWallet?, suiWallet?)`
 Create a signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. Returns tier and discount percentage. 1 merchant credit.
 
 ### Discovery (free)
@@ -95,7 +95,7 @@ Get full public merchant profile including token tiers, NFT collections, discoun
 #### `insumer_list_tokens(chain?, symbol?, type?)`
 List all registered tokens and NFT collections in the registry. Filter by chain ID, symbol, or asset type (token/nft).
 
-#### `insumer_check_discount(merchant, wallet?, solanaWallet?, xrplWallet?)`
+#### `insumer_check_discount(merchant, wallet?, solanaWallet?, xrplWallet?, tronWallet?, stellarWallet?, suiWallet?)`
 Calculate discount for a wallet at a merchant. Returns tier and discount percentage per token. Free, no credits consumed.
 
 ### Credits & Keys
@@ -104,10 +104,10 @@ Calculate discount for a wallet at a merchant. Returns tier and discount percent
 Check verification credit balance, tier (free/pro/enterprise), and daily rate limit for the current API key.
 
 #### `insumer_buy_key(txHash, chainId, amount, appName)`
-Buy a new API key with USDC, USDT, or BTC (no auth required). Send the payment, then call with the transaction hash. Sender wallet becomes the key's identity. One key per wallet. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. USDC/USDT auto-detected on EVM and Solana; BTC converted to USD at market rate (1 confirmation). Minimum $5. Non-refundable.
+Buy a new API key with USDC, USDT, BTC, or USDT-TRC20 (no auth required). Send the payment, then call with the transaction hash. Sender wallet becomes the key's identity. One key per wallet. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin, Tron. USDC/USDT auto-detected on EVM and Solana; BTC converted to USD at market rate (1 confirmation); Tron accepts USDT-TRC20. Minimum $5. Non-refundable.
 
 #### `insumer_buy_credits(txHash, chainId, amount, updateWallet?)`
-Buy verification credits with USDC, USDT, or BTC. Volume discounts: $5-$99 = $0.04/call, $100-$499 = $0.03, $500+ = $0.02. Minimum $5. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable.
+Buy verification credits with USDC, USDT, BTC, or USDT-TRC20. Volume discounts: $5-$99 = $0.04/call, $100-$499 = $0.03, $500+ = $0.02. Minimum $5. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin, Tron. Non-refundable.
 
 #### `insumer_confirm_payment(code, txHash, chainId, amount)`
 Confirm USDC or USDT payment for a discount code. After calling `insumer_verify`, confirm the on-chain payment. The server verifies the transaction receipt. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana.
@@ -145,18 +145,18 @@ Complete domain verification after placing the token. Verified merchants get a t
 
 ### Commerce Protocol Integration
 
-#### `insumer_acp_discount(merchantId, wallet?, solanaWallet?, xrplWallet?, items?)`
+#### `insumer_acp_discount(merchantId, wallet?, solanaWallet?, xrplWallet?, tronWallet?, stellarWallet?, suiWallet?, items?)`
 Check discount eligibility in OpenAI/Stripe Agentic Commerce Protocol (ACP) format. Returns coupon objects, applied/rejected arrays, and per-item allocations. 1 merchant credit.
 
-#### `insumer_ucp_discount(merchantId, wallet?, solanaWallet?, xrplWallet?, items?)`
+#### `insumer_ucp_discount(merchantId, wallet?, solanaWallet?, xrplWallet?, tronWallet?, stellarWallet?, suiWallet?, items?)`
 Check discount eligibility in Google Universal Commerce Protocol (UCP) format. Returns title, extension field, and applied array. 1 merchant credit.
 
 #### `insumer_validate_code(code)`
 Validate an INSR-XXXXX discount code. Returns validity, discount percent, and expiry. Free, no auth required.
 
-## Supported Chains (33)
+## Supported Chains (37)
 
-Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL, Bitcoin.
+Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL, Bitcoin, Tron, Stellar, Sui.
 
 ## Security Model
 

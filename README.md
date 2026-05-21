@@ -48,11 +48,13 @@ Add to your MCP settings:
 }
 ```
 
-### Get an API Key
+### Get a key — no signup, no dashboard, no password
+
+Three paths, all give you a working `insr_live_...` key in seconds with 100 reads/day and 10 verification credits. One free key per email.
 
 **Option A — Let your agent do it:** Start the server without a key. Your AI agent can call the `insumer_setup` tool with your email to generate a free key instantly. Add it to your config and restart.
 
-**Option B — Terminal (no browser needed):**
+**Option B — Terminal:**
 
 ```bash
 curl -s -X POST https://api.insumermodel.com/v1/keys/create \
@@ -60,11 +62,11 @@ curl -s -X POST https://api.insumermodel.com/v1/keys/create \
   -d '{"email": "you@example.com", "appName": "MCP Server", "tier": "free"}'
 ```
 
-Returns an `insr_live_...` key with 100 reads/day and 10 verification credits. One free key per email.
-
-**Option C — Browser:** Go to [insumermodel.com/developers](https://insumermodel.com/developers/#pricing) and generate a free key instantly.
+**Option C — Browser:** Enter your email on [insumermodel.com](https://insumermodel.com/?utm_source=npm-mcp-server-insumer) — the key appears inline.
 
 Set it as `INSUMER_API_KEY` in your config.
+
+**Already have a key?** Manage usage, top up, or upgrade at [insumermodel.com/developers/account/](https://insumermodel.com/developers/account/?utm_source=npm-mcp-server-insumer).
 
 ## What You Get Back
 

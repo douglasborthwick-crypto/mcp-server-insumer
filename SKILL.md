@@ -14,7 +14,7 @@ metadata:
 
 Privacy-preserving on-chain token and NFT verification across 37 blockchains (31 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
 
-**Version**: 1.10.0
+**Version**: 1.10.2
 
 ## Overview
 
@@ -76,7 +76,7 @@ Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations
 List available EAS compliance templates (Coinbase Verified Account/Country/One on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.
 
 #### `insumer_wallet_trust(wallet, solanaWallet?, xrplWallet?, bitcoinWallet?, tronWallet?, stellarWallet?, suiWallet?, proof?)`
-Generate an ECDSA-signed wallet trust fact profile. 38 base checks across 21 chains spanning stablecoins (USDC + USDT), governance, NFTs, staking, and institutional stablecoins — up to 49 total with optional Solana, XRPL, Bitcoin, Tron, Stellar, and Sui wallets. 3 credits (6 with merkle).
+Generate an ECDSA-signed wallet trust fact profile. 44 base checks across 25 chains in 5 dimensions — stablecoins (USDC + USDT across 21 EVM chains), governance, NFTs, staking, and institutional stablecoins (EURCV, USDCV, USDC, BENJI across Ethereum, Solana, XRPL, Stellar, Sui) — up to 49 checks across 27 chains in 9 dimensions with optional Solana, XRPL, Bitcoin, and Tron wallets. 3 credits (6 with merkle).
 
 #### `insumer_batch_wallet_trust(wallets, proof?)`
 Batch trust profiles for up to 10 wallets (each accepts `wallet`, `solanaWallet`, `xrplWallet`, `bitcoinWallet`, `tronWallet`, `stellarWallet`, `suiWallet`). Shared block fetches, 5-8x faster than sequential calls. Partial success supported. 3 credits/wallet (6 with merkle).

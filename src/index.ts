@@ -157,7 +157,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.10.0",
+  version: "1.10.2",
 });
 
 // ============================================================
@@ -289,7 +289,7 @@ server.tool(
 
 server.tool(
   "insumer_wallet_trust",
-  "Generate a structured, ECDSA-signed wallet trust fact profile. Send a wallet address, get 38 base checks across stablecoins (USDC + USDT across 21 chains), governance tokens (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), staking positions (stETH, rETH, cbETH), and institutional stablecoins (EURCV/USDCV on Ethereum). Up to 49 checks across 27 chains with optional Solana, XRPL, Bitcoin, Tron, Stellar, and Sui wallets. Returns per-dimension pass/fail counts and overall summary. No score, no opinion — just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
+  "Generate a structured, ECDSA-signed wallet trust fact profile. Send an EVM wallet address and get 44 base checks across 25 chains in 5 dimensions: stablecoins (USDC + USDT across 21 EVM chains), governance (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), staking (stETH, rETH, cbETH), and institutional stablecoins (EURCV, USDCV, USDC, and BENJI across Ethereum, Solana, XRPL, Stellar, and Sui — the cross-chain entries evaluate when the matching optional wallet is supplied). Add optional Solana, XRPL, Bitcoin, and Tron wallets to reach up to 49 checks across 27 chains in 9 dimensions (adds Solana USDC, XRPL RLUSD + USDC, native BTC holdings, and Tron USDT-TRC20). Returns per-dimension pass/fail counts and an overall summary — no score, no opinion, just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana and institutional EURCV/USDCV on Solana checks."),
@@ -492,7 +492,7 @@ server.tool(
 
 server.tool(
   "insumer_buy_key",
-  "Buy a new API key with USDC, USDT, or BTC (no auth required). Agent-friendly: no email needed. Send USDC/USDT to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Send BTC to bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0 (1 confirmation required). USDC/USDT auto-detected from transaction. BTC converted to USD at market rate. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Non-refundable.",
+  "Buy a new API key with USDC, USDT, BTC, or USDT-TRC20 (no auth required). Agent-friendly: no email needed. Send USDC/USDT to EVM wallet 0xAd982CB19aCCa2923Df8F687C0614a7700255a23 or Solana wallet 6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr. Send USDT-TRC20 to Tron wallet TC5yvwkAMakkXtUxYiu2Yn1xbBcwYuD6cn. Send BTC to bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0 (1 confirmation required). USDC/USDT auto-detected from transaction. BTC converted to USD at market rate. One key per wallet — use insumer_buy_credits to top up. Volume discounts: $5–$99 = $0.04/call, $100–$499 = $0.03, $500+ = $0.02. Non-refundable.",
   {
     txHash: z.string().describe("Transaction hash proving payment"),
     chainId: UsdcChainIdWithBitcoin,
@@ -507,7 +507,7 @@ server.tool(
 
 server.tool(
   "insumer_buy_credits",
-  "Buy verification credits with USDC, USDT, or BTC. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Crypto sent on unsupported chains cannot be recovered. Non-refundable. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true.",
+  "Buy verification credits with USDC, USDT, BTC, or USDT-TRC20. Volume discounts: $5–$99 = $0.04/call (25 credits/$1), $100–$499 = $0.03 (33/$1, 25% off), $500+ = $0.02 (50/$1, 50% off). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). USDT-TRC20 on Tron. BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Crypto sent on unsupported chains cannot be recovered. Non-refundable. First purchase registers the sender wallet to the API key. Subsequent purchases must come from the same sender. To change the registered wallet, set updateWallet to true.",
   {
     txHash: z.string().describe("Transaction hash proving payment"),
     chainId: UsdcChainIdWithBitcoin,
@@ -675,7 +675,7 @@ server.tool(
 
 server.tool(
   "insumer_buy_merchant_credits",
-  "Buy merchant verification credits with USDC, USDT, or BTC. Volume discounts: $5–$99 = $0.04/call (25/$1), $100–$499 = $0.03 (33/$1), $500+ = $0.02 (50/$1). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Non-refundable. Owner only. First purchase registers the sender wallet to the API key. To change the registered wallet, set updateWallet to true.",
+  "Buy merchant verification credits with USDC, USDT, BTC, or USDT-TRC20. Volume discounts: $5–$99 = $0.04/call (25/$1), $100–$499 = $0.03 (33/$1), $500+ = $0.02 (50/$1). Minimum $5. USDC/USDT on EVM and Solana (auto-detected). USDT-TRC20 on Tron. BTC on Bitcoin (converted to USD at market rate, 1 confirmation required). Non-refundable. Owner only. First purchase registers the sender wallet to the API key. To change the registered wallet, set updateWallet to true.",
   {
     id: z.string().describe("Merchant ID"),
     txHash: z.string().describe("Transaction hash proving payment"),

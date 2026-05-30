@@ -185,8 +185,8 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 |------|-------------|
 | `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
-| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 38 base checks (up to 49 with optional Solana, XRPL, Bitcoin, Tron, Stellar, and Sui) across 27 chains covering stablecoins, governance, NFTs, staking, institutional stablecoins, and cross-chain positions. 3 credits (6 with merkle). |
-| `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet` and `xrplWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
+| `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 44 base checks across 25 chains in 5 dimensions (stablecoins, governance, NFTs, staking, institutional stablecoins — EURCV/USDCV/USDC/BENJI across Ethereum, Solana, XRPL, Stellar, Sui), up to 49 checks across 27 chains in 9 dimensions with optional Solana, XRPL, Bitcoin, and Tron wallets. 3 credits (6 with merkle). |
+| `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet`, `xrplWallet`, `bitcoinWallet`, `tronWallet`, `stellarWallet`, and `suiWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
 | `insumer_verify` | Create signed discount code (INSR-XXXXX, 30-min expiry) for a wallet at a merchant. 1 merchant credit. |
 
 ### Discovery (free)
@@ -202,9 +202,9 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 | Tool | Description |
 |------|-------------|
-| `insumer_buy_key` | Buy a new API key with USDC, USDT, or BTC (no auth required). Agent-friendly: no email needed, sender wallet becomes the key's identity. One key per wallet. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable. |
+| `insumer_buy_key` | Buy a new API key with USDC, USDT, BTC, or USDT-TRC20 (no auth required). Agent-friendly: no email needed, sender wallet becomes the key's identity. One key per wallet. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin, Tron. Non-refundable. |
 | `insumer_credits` | Check credit balance and tier. |
-| `insumer_buy_credits` | Buy verification credits with USDC, USDT, or BTC. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
+| `insumer_buy_credits` | Buy verification credits with USDC, USDT, BTC, or USDT-TRC20. Volume discounts: $0.04–$0.02/call. Supported chains: Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin, Tron. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 | `insumer_confirm_payment` | Confirm USDC payment for a discount code. |
 
 ### Merchant Onboarding (owner-only)
@@ -217,7 +217,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 | `insumer_configure_nfts` | Set NFT collection discounts. |
 | `insumer_configure_settings` | Set discount mode, cap, USDC payments. |
 | `insumer_publish_directory` | Publish merchant to public directory. |
-| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC, USDT, or BTC. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
+| `insumer_buy_merchant_credits` | Buy merchant verification credits with USDC, USDT, BTC, or USDT-TRC20. Volume discounts: $0.04–$0.02/call. Owner only. Non-refundable. First purchase registers sender wallet; subsequent purchases must match or include `updateWallet: true`. |
 
 ### Domain Verification (owner-only)
 
@@ -244,8 +244,9 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 - **EVM (USDC/USDT):** `0xAd982CB19aCCa2923Df8F687C0614a7700255a23`
 - **Solana (USDC/USDT):** `6a1mLjefhvSJX1sEX8PTnionbE9DqoYjU6F6bNkT4Ydr`
 - **Bitcoin:** `bc1qg7qnerdhlmdn899zemtez5tcx2a2snc0dt9dt0`
+- **Tron (USDT-TRC20):** `TC5yvwkAMakkXtUxYiu2Yn1xbBcwYuD6cn`
 
-**Supported payment chains:** Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin. Tokens sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. [Full pricing →](https://insumermodel.com/pricing/)
+**Supported payment chains:** Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, Solana, Bitcoin, Tron. Tokens sent on unsupported chains cannot be recovered. All purchases are final and non-refundable. [Full pricing →](https://insumermodel.com/pricing/)
 
 ## Handling `rpc_failure` Errors
 

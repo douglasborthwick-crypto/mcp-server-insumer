@@ -183,7 +183,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
+| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, plus `ratio_to_amount` for self-scaling agent-spend limits and `ratio_to_supply` for share-of-supply rules — both RPC EVM only). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
 | `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 44 base checks across 25 chains in 5 dimensions (stablecoins, governance, NFTs, staking, institutional stablecoins — EURCV/USDCV/USDC/BENJI across Ethereum, Solana, XRPL, Stellar, Sui), up to 49 checks across 27 chains in 9 dimensions with optional Solana, XRPL, Bitcoin, and Tron wallets. 3 credits (6 with merkle). |
 | `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet`, `xrplWallet`, `bitcoinWallet`, `tronWallet`, `stellarWallet`, and `suiWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |

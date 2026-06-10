@@ -181,6 +181,8 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 ### On-Chain Verification (cost credits)
 
+> **`token_balance` thresholds are decimal strings.** Pass `threshold` as `"100"`, not `100`. Keys created from 2026-06-10 sign with `kid: insumer-attest-v2`, which preserves full precision and rejects a JSON number with a `400`. The `insumer_attest` tool accepts a number or string and coerces to the canonical string; older `insumer-attest-v1` keys accept either.
+
 | Tool | Description |
 |------|-------------|
 | `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, plus `ratio_to_amount` for self-scaling agent-spend limits and `ratio_to_supply` for share-of-supply rules — both RPC EVM only). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |

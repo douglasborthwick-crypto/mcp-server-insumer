@@ -157,7 +157,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.10.3",
+  version: "1.11.0",
 });
 
 // ============================================================
@@ -250,10 +250,10 @@ server.tool(
           type: z.enum(["token_balance", "nft_ownership", "eas_attestation", "farcaster_id", "ratio_to_amount", "ratio_to_supply"]).describe("Condition type: token_balance, nft_ownership, eas_attestation, farcaster_id (Farcaster IdRegistry on Optimism), ratio_to_amount (balance >= multiple * amount; RPC EVM chains only), or ratio_to_supply (balance / totalSupply >= minFraction; RPC EVM chains, ERC-20 only)"),
           contractAddress: z.string().optional().describe("Token or NFT contract address (required for token_balance, nft_ownership, ratio_to_amount, and ratio_to_supply; ratio_to_supply requires an ERC-20 contract, no native)"),
           chainId: ChainId.optional(),
-          threshold: z.number().optional().describe("Minimum balance required (for token_balance). Must be > 0 when proof is merkle."),
-          multiple: z.number().optional().describe("For ratio_to_amount: collateralization multiple. Met iff balance >= multiple * amount (e.g. 10 for 'hold >= 10x the amount'). Must be > 0."),
-          amount: z.number().optional().describe("For ratio_to_amount: per-request reference amount in token/display units (e.g. 100 for 100 USDC, not base units/wei). Must be > 0."),
-          minFraction: z.number().optional().describe("For ratio_to_supply: required share of total supply, a fraction in (0,1] (e.g. 0.005 for 0.5%). Met iff balance / totalSupply() >= minFraction. For project/governance tokens, not stablecoins."),
+          threshold: z.union([z.string(), z.number()]).transform((v) => String(v)).optional().describe("Minimum balance for token_balance, as a decimal string in token/display units (e.g. \"100\", not base units). Numbers are accepted and coerced to a string. Must be > 0 when proof is merkle."),
+          multiple: z.union([z.string(), z.number()]).transform((v) => String(v)).optional().describe("For ratio_to_amount: collateralization multiple as a decimal string (e.g. \"10\" for 'hold >= 10x the amount'). Met iff balance >= multiple * amount. Numbers are accepted and coerced. Must be > 0."),
+          amount: z.union([z.string(), z.number()]).transform((v) => String(v)).optional().describe("For ratio_to_amount: per-request reference amount in token/display units as a decimal string (e.g. \"100\" for 100 USDC, not base units/wei). Numbers are accepted and coerced. Must be > 0."),
+          minFraction: z.union([z.string(), z.number()]).transform((v) => String(v)).optional().describe("For ratio_to_supply: required share of total supply, a decimal string in (0,1] (e.g. \"0.005\" for 0.5%). Met iff balance / totalSupply() >= minFraction. Numbers are accepted and coerced. For project/governance tokens, not stablecoins."),
           decimals: z.number().int().min(0).max(77).optional().describe("Token decimals (default 18)"),
           label: z.string().max(100).optional().describe("Human-readable label"),
           schemaId: z.string().optional().describe("EAS schema ID (bytes32 hex). Required for eas_attestation unless template is provided."),

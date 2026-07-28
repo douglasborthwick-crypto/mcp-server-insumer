@@ -68,6 +68,26 @@ Set it as `INSUMER_API_KEY` in your config.
 
 **Already have a key?** Manage usage, top up, or upgrade at [insumermodel.com/developers/account/](https://insumermodel.com/developers/account/?utm_source=npm-mcp-server-insumer).
 
+### Option D — Pay per call with x402 (no key at all)
+
+Instead of a key, set `INSUMER_PAYMENT_KEY` to a **throwaway Base wallet** funded with a few dollars of USDC. Metered calls (`insumer_attest`, `insumer_wallet_trust`, `insumer_batch_wallet_trust`) are then paid inline via [x402](https://www.x402.org) — the server requests a price, signs an EIP-3009 USDC authorization on Base, and retries. No signup, no credits, no dashboard.
+
+```json
+{
+  "mcpServers": {
+    "insumer": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-insumer"],
+      "env": { "INSUMER_PAYMENT_KEY": "0x<throwaway-wallet-private-key>" }
+    }
+  }
+}
+```
+
+- Base USDC only; the wallet needs USDC but **no ETH** (settlement is gasless).
+- Each call spends a few cents (attest $0.05, trust $0.15). Use a **dedicated throwaway wallet** funded with a small amount — never a wallet holding meaningful funds.
+- If both `INSUMER_API_KEY` and `INSUMER_PAYMENT_KEY` are set, the key (credits) is used.
+
 ## What You Get Back
 
 When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:

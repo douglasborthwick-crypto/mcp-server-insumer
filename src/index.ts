@@ -3,14 +3,26 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { randomBytes } from "node:crypto";
+import { privateKeyToAccount } from "viem/accounts";
 
 const API_BASE = "https://api.insumermodel.com/v1";
 const KEYGEN_URL = "https://api.insumermodel.com/v1/keys/create";
 
 const apiKey = process.env.INSUMER_API_KEY ?? "";
-if (!apiKey) {
-  console.error("INSUMER_API_KEY not set. Use the insumer_setup tool to generate a free API key, then add it to your MCP config.");
+// Pay-per-call: with no API key but a funded Base wallet key, metered calls are
+// paid inline via x402 (EIP-3009 USDC on Base) — no signup, no credits. Use a
+// THROWAWAY wallet funded with a small amount of USDC; each call spends a few
+// cents. See the x402 section at https://insumermodel.com/developers.
+const paymentKey = (process.env.INSUMER_PAYMENT_KEY ?? "").trim();
+const paymentAccount = /^0x[0-9a-fA-F]{64}$/.test(paymentKey)
+  ? privateKeyToAccount(paymentKey as `0x${string}`)
+  : null;
+if (!apiKey && !paymentAccount) {
+  console.error("Neither INSUMER_API_KEY nor INSUMER_PAYMENT_KEY set. Use insumer_setup for a free API key, or set INSUMER_PAYMENT_KEY to a funded Base wallet to pay per call via x402.");
 }
+
+const BASE_USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 // --- Shared API helper ---
 
@@ -19,8 +31,11 @@ async function apiCall(
   path: string,
   body?: Record<string, unknown>
 ): Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }> {
+  // Prefer an API key (credits); fall back to x402 pay-per-call if a payment
+  // wallet is configured.
   if (!apiKey) {
-    return { ok: false, error: "INSUMER_API_KEY is not set. Call the insumer_setup tool to generate a free API key instantly, then add it to your MCP config as INSUMER_API_KEY and restart." };
+    if (paymentAccount) return x402Call(method, path, body);
+    return { ok: false, error: "No credentials. Call insumer_setup for a free API key, or set INSUMER_PAYMENT_KEY to a funded Base wallet to pay per call." };
   }
   const url = `${API_BASE}${path}`;
   const res = await fetch(url, {
@@ -37,6 +52,65 @@ async function apiCall(
     error?: unknown;
     meta?: unknown;
   }>;
+}
+
+// x402 pay-per-call: request the priced 402, sign an EIP-3009 USDC transfer for
+// exactly the quoted amount, retry with the X-PAYMENT header. The facilitator
+// settles on Base; the wallet needs USDC but no ETH (gasless).
+async function x402Call(
+  method: string,
+  path: string,
+  body?: Record<string, unknown>
+): Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }> {
+  if (!paymentAccount) {
+    return { ok: false, error: "INSUMER_PAYMENT_KEY is not a valid 0x-prefixed 32-byte private key." };
+  }
+  const url = `${API_BASE}${path}`;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const payload = body ? JSON.stringify(body) : undefined;
+
+  // 1. priced quote
+  const quoteRes = await fetch(url, { method, headers, body: payload });
+  if (quoteRes.status !== 402) {
+    return quoteRes.json() as Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }>;
+  }
+  const quote = (await quoteRes.json()) as {
+    accepts?: Array<{ amount: string; asset: string; payTo: string; network: string; scheme: string; extra?: { name?: string; version?: string } }>;
+    resource?: unknown;
+  };
+  const req = quote.accepts?.[0];
+  if (!req) return { ok: false, error: "x402 quote had no payable options." };
+
+  // 2. sign EIP-3009 TransferWithAuthorization for exactly the quoted amount
+  const now = Math.floor(Date.now() / 1000);
+  const auth = {
+    from: paymentAccount.address,
+    to: req.payTo,
+    value: req.amount,
+    validAfter: "0",
+    validBefore: String(now + 120),
+    nonce: ("0x" + randomBytes(32).toString("hex")) as `0x${string}`,
+  };
+  const signature = await paymentAccount.signTypedData({
+    domain: { name: req.extra?.name ?? "USD Coin", version: req.extra?.version ?? "2", chainId: 8453, verifyingContract: BASE_USDC as `0x${string}` },
+    types: {
+      TransferWithAuthorization: [
+        { name: "from", type: "address" }, { name: "to", type: "address" }, { name: "value", type: "uint256" },
+        { name: "validAfter", type: "uint256" }, { name: "validBefore", type: "uint256" }, { name: "nonce", type: "bytes32" },
+      ],
+    },
+    primaryType: "TransferWithAuthorization",
+    message: {
+      from: auth.from, to: auth.to as `0x${string}`, value: BigInt(auth.value),
+      validAfter: BigInt(auth.validAfter), validBefore: BigInt(auth.validBefore), nonce: auth.nonce,
+    },
+  });
+
+  // 3. retry with the x402 v2 payment header
+  const v2 = { x402Version: 2, resource: quote.resource, accepted: req, payload: { signature, authorization: auth } };
+  const xPayment = Buffer.from(JSON.stringify(v2)).toString("base64");
+  const paidRes = await fetch(url, { method, headers: { ...headers, "X-PAYMENT": xPayment }, body: payload });
+  return paidRes.json() as Promise<{ ok: boolean; data?: unknown; error?: unknown; meta?: unknown }>;
 }
 
 async function publicApiCall(

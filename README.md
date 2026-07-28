@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/mcp-server-insumer)](https://www.npmjs.com/package/mcp-server-insumer) [![Glama](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer/badge)](https://glama.ai/mcp/servers/@douglasborthwick-crypto/mcp-server-insumer) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for [InsumerAPI](https://insumermodel.com/developers/) — condition-based access infrastructure. Send a wallet and conditions, get a signed boolean across 37 chains. No balances exposed, no identity required, no trust in the API provider needed.
+MCP server for [InsumerAPI](https://insumermodel.com/developers/) — condition-based access infrastructure. Send a wallet and conditions, get a signed boolean across 38 chains. No balances exposed, no identity required, no trust in the API provider needed.
 
 Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible client) to add condition-based access to any workflow — verify on-chain conditions, discover merchants, generate signed discount codes, and onboard new merchants.
 
@@ -10,7 +10,7 @@ Enables AI agents (Claude Desktop, Cursor, Windsurf, and any MCP-compatible clie
 
 Also available as: [LangChain](https://pypi.org/project/langchain-insumer/) (26 tools, PyPI) | [langchain-community](https://github.com/langchain-ai/langchain/pull/549) (26 tools, PR #549) | [ElizaOS](https://www.npmjs.com/package/eliza-plugin-insumer) (10 actions, npm) | [OpenAI GPT](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-verify) (GPT Store) | [insumer-verify](https://www.npmjs.com/package/insumer-verify) (client-side verification, npm)
 
-**[Full AI Agent Verification API guide](https://insumermodel.com/ai-agent-verification-api/)** — covers all 37 chains, trust profiles, commerce protocols, and signature verification.
+**[Full AI Agent Verification API guide](https://insumermodel.com/ai-agent-verification-api/)** — covers all 38 chains, trust profiles, commerce protocols, and signature verification.
 
 ## Quick Start
 
@@ -205,7 +205,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 | Tool | Description |
 |------|-------------|
-| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, plus `ratio_to_amount` for self-scaling agent-spend limits and `ratio_to_supply` for share-of-supply rules — both RPC EVM only). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
+| `insumer_attest` | Verify on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, `evm_view_call` for arbitrary boolean view functions, `ratio_to_amount` for self-scaling agent-spend limits and `ratio_to_supply` for share-of-supply rules — all three RPC EVM only, plus `erc8004_agent` for ERC-8004 agent registration and `erc7710_delegation` for MetaMask-framework delegation validity, both on Base). Returns ECDSA-signed boolean with `kid`, `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. 1 credit. Optional `proof: "merkle"` for EIP-1186 Merkle storage proofs (2 credits). |
 | `insumer_compliance_templates` | List available EAS compliance templates (Coinbase Verifications on Base, Gitcoin Passport on Optimism). Free. |
 | `insumer_wallet_trust` | Generate ECDSA-signed wallet trust fact profile. 44 base checks across 25 chains in 5 dimensions (stablecoins, governance, NFTs, staking, institutional stablecoins — EURCV/USDCV/USDC/BENJI across Ethereum, Solana, XRPL, Stellar, Sui), up to 49 checks across 27 chains in 9 dimensions with optional Solana, XRPL, Bitcoin, and Tron wallets. 3 credits (6 with merkle). |
 | `insumer_batch_wallet_trust` | Batch trust profiles for up to 10 wallets. Each wallet object supports optional `solanaWallet`, `xrplWallet`, `bitcoinWallet`, `tronWallet`, `stellarWallet`, and `suiWallet`. Shared block fetches, 5-8x faster. Partial success supported. 3 credits/wallet (6 with merkle). |
@@ -278,7 +278,7 @@ If the API cannot reach one or more blockchain data sources after retries, endpo
 
 ## Supported Chains (37)
 
-31 EVM chains + Solana + XRP Ledger + Bitcoin + Tron + Stellar + Sui. Includes Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, and 23 more EVM. [Full list →](https://insumermodel.com/developers/api-reference/)
+32 EVM chains + Solana + XRP Ledger + Bitcoin + Tron + Stellar + Sui. Includes Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Robinhood Chain, and 23 more EVM. [Full list →](https://insumermodel.com/developers/api-reference/)
 
 ## Also Available As
 

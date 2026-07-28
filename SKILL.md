@@ -1,6 +1,6 @@
 ---
 name: insumer-verify
-description: Privacy-preserving on-chain verification across 37 blockchains (incl. Bitcoin, Tron, Stellar, Sui). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
+description: Privacy-preserving on-chain verification across 38 blockchains (incl. Bitcoin, Tron, Stellar, Sui). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
 homepage: https://insumermodel.com/developers/
 metadata:
   clawdbot:
@@ -12,7 +12,7 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 37 blockchains (31 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 38 blockchains (32 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
 
 **Version**: 1.10.3
 
@@ -70,7 +70,7 @@ Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key (RFC 7517). 
 ### On-Chain Verification
 
 #### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, bitcoinWallet?, tronWallet?, stellarWallet?, suiWallet?, conditions, proof?, format?)`
-Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity) across 37 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. Stellar results include `ledgerIndex`/`ledgerHash` and surface `assetCode` (which flows into conditionHash for non-native assets). Sui results include `checkpointSequence`/`checkpointDigest`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on supported EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
+Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, boolean view calls, supply/amount ratios, ERC-8004 agent registration, ERC-7710 delegation validity) across 38 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. Stellar results include `ledgerIndex`/`ledgerHash` and surface `assetCode` (which flows into conditionHash for non-native assets). Sui results include `checkpointSequence`/`checkpointDigest`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on supported EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
 
 #### `insumer_compliance_templates()`
 List available EAS compliance templates (Coinbase Verified Account/Country/One on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.

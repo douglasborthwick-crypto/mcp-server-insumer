@@ -14,11 +14,11 @@ metadata:
 
 Privacy-preserving on-chain token and NFT verification across 38 blockchains (32 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
 
-**Version**: 1.10.3
+**Version**: 1.13.3
 
 ## Overview
 
-InsumerAPI enables agents to verify on-chain credentials without handling private keys or raw balance data. Every response is ECDSA P-256 signed and independently verifiable.
+InsumerAPI lets agents evaluate wallet state against conditions without handling private keys or raw balance data. Every response is ECDSA P-256 signed, carries an ML-DSA-65 post-quantum companion since September 2026, and is independently verifiable.
 
 Agents can:
 - Verify token balances, NFT ownership, EAS attestations, and Farcaster identity
@@ -154,18 +154,18 @@ Check discount eligibility in Google Universal Commerce Protocol (UCP) format. R
 #### `insumer_validate_code(code)`
 Validate an INSR-XXXXX discount code. Returns validity, discount percent, and expiry. Free, no auth required.
 
-## Supported Chains (37)
+## Supported Chains (38)
 
-Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Solana, XRPL, Bitcoin, Tron, Stellar, Sui.
+Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Robinhood Chain, Solana, XRPL, Bitcoin, Tron, Stellar, Sui.
 
 ## Security Model
 
 - **No private keys required** — read-only verification, never handles signing keys
 - **No balances exposed** — boolean results only (pass/fail), raw amounts never returned
-- **ECDSA P-256 signatures** — every response cryptographically signed
-- **JWKS key discovery** — public key at [/.well-known/jwks.json](https://insumermodel.com/.well-known/jwks.json) (RFC 7517)
+- **ECDSA P-256 signatures** — every response cryptographically signed; since 2026-09-01 an ML-DSA-65 post-quantum companion (`pqSig`/`pqKid`, and `pqJwt` beside `jwt`) rides beside `sig`/`kid`
+- **JWKS key discovery** — five entries over two keys at [/.well-known/jwks.json](https://insumermodel.com/.well-known/jwks.json) (RFC 7517; the post-quantum key as RFC 9964 `AKP` entries), matched by `kid` or `pqKid`, never by position
 - **Optional Merkle proofs** — EIP-1186 storage proofs for trustless verification against block headers
-- **Independent verification** — [`insumer-verify`](https://www.npmjs.com/package/insumer-verify) (npm, zero deps) checks signature, condition hash, block freshness, expiry
+- **Independent verification** — [`insumer-verify`](https://www.npmjs.com/package/insumer-verify) (npm, zero deps) reports five verdicts: signature, condition hash, block freshness, expiry, and the post-quantum companion (1.8.1+)
 
 ## Links
 

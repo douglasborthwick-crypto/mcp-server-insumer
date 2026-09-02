@@ -123,8 +123,10 @@ When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
       "attestedAt": "2026-02-28T12:34:57.000Z",
       "expiresAt": "2026-02-28T13:04:57.000Z"
     },
-    "sig": "MEUCIQD...(base64 ECDSA signature)...",
-    "kid": "insumer-attest-v2"
+    "sig": "NgA7BO8SAildiTrgIQY2UyXsBrySZknkP85pT2Zqv8Hq0KsCsB8DRFVMkXgnXtCXrbb726Is6k4LyyBYU+f/Pw==",
+    "kid": "insumer-attest-v2",
+    "pqSig": "<base64 ML-DSA-65 signature>",
+    "pqKid": "insumer-attest-pq1"
   },
   "meta": {
     "version": "1.0",
@@ -135,7 +137,7 @@ When your agent calls `insumer_attest`, you get an ECDSA-signed attestation:
 }
 ```
 
-The `sig` is an ECDSA P-256 signature over `{id, pass, results, attestedAt}`. The `kid` identifies which key signed it. The `conditionHash` is a SHA-256 of the exact condition logic that was evaluated.
+The `sig` is an ECDSA P-256 signature (base64, P1363 r||s, 88 characters). The `kid` identifies the key and selects the signed bytes: `insumer-attest-v2` signs `"insumer.attestation.v2\n" + canonical_json({v: 2, id, pass, results, attestedAt})` (keys sorted at every level); `insumer-attest-v1` signs the bare `JSON.stringify` of `{id, pass, results, attestedAt}` in insertion order. Since 2026-09-01 every attest and trust response also carries a post-quantum companion, `pqSig` and `pqKid` (ML-DSA-65 over the post-quantum domain tag plus the same classical preimage the `kid` selects), added beside `sig` and `kid` without changing them. The `conditionHash` is a SHA-256 of the exact condition logic that was evaluated.
 
 No balances. No amounts. Just a cryptographically signed true/false.
 
@@ -153,7 +155,7 @@ Add `format: "jwt"` to the `insumer_attest` tool parameters to receive the attes
 }
 ```
 
-The response includes an additional `jwt` field containing an ES256-signed JWT. This token is verifiable by any standard JWT library via the JWKS endpoint at `GET /v1/jwks` — making it compatible with Kong, Nginx, Cloudflare Access, AWS API Gateway, and other middleware that accepts JWT bearer tokens.
+The response includes an additional `jwt` field containing an ES256-signed JWT, and beside it a `pqJwt` sibling (a compact JWS with `alg` ML-DSA-65 carrying the same claims, signed under `insumer-attest-pq1`). The `jwt` token is verifiable by any standard JWT library via the JWKS endpoint at `GET /v1/jwks` — making it compatible with Kong, Nginx, Cloudflare Access, AWS API Gateway, and other middleware that accepts JWT bearer tokens.
 
 ## Verify the Response
 
@@ -166,7 +168,7 @@ npm install insumer-verify
 ```typescript
 import { verifyAttestation } from "insumer-verify";
 
-// attestationResponse = the full API envelope {ok, data: {attestation, sig, kid}, meta}
+// attestationResponse = the full API envelope {ok, data: {attestation, sig, kid, pqSig, pqKid}, meta}
 // Do NOT pass attestationResponse.data — the function expects the outer envelope
 const result = await verifyAttestation(attestationResponse, {
   jwksUrl: "https://insumermodel.com/.well-known/jwks.json",
@@ -182,7 +184,7 @@ if (result.valid) {
 }
 ```
 
-This runs 4 independent checks: ECDSA signature, condition hash integrity, block freshness, and attestation expiry. Zero runtime dependencies, uses Web Crypto API.
+This reports five independent verdicts: ECDSA signature, condition hash integrity, block freshness, attestation expiry, and the post-quantum companion (`insumer-verify` 1.8.1+ reports it as verified, refuted, absent, or unverifiable). Zero runtime dependencies, uses Web Crypto API.
 
 ## Tools (27)
 
@@ -196,7 +198,7 @@ This runs 4 independent checks: ECDSA signature, condition hash integrity, block
 
 | Tool | Description |
 |------|-------------|
-| `insumer_jwks` | Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key. Use the `kid` from attestation responses to match the correct key. |
+| `insumer_jwks` | Get the JWKS: five entries over two keys. The ECDSA P-256 key under `insumer-attest-v1`, `insumer-attest-v2`, and `insumer-trust-v2`, followed by the ML-DSA-65 post-quantum key under two RFC 9964 `AKP` entries, `insumer-attest-pq1` and `insumer-trust-pq1`. Match by the `kid` (or `pqKid`) on the response, never by position. |
 
 ### On-Chain Verification (cost credits)
 

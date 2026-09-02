@@ -231,7 +231,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.13.2",
+  version: "1.13.3",
 });
 
 // ============================================================
@@ -240,7 +240,7 @@ const server = new McpServer({
 
 server.tool(
   "insumer_jwks",
-  "Get the JWKS (JSON Web Key Set) containing InsumerAPI's ECDSA P-256 public signing key. Use this to verify attestation signatures without hardcoding the key. The kid field in attestation responses identifies which key signed the response. No authentication required.",
+  "Get the JWKS (JSON Web Key Set): five entries over two keys. The ECDSA P-256 key under kids insumer-attest-v1, insumer-attest-v2, and insumer-trust-v2, followed by the ML-DSA-65 post-quantum key under two RFC 9964 AKP entries, insumer-attest-pq1 and insumer-trust-pq1. Use this to verify attestation and trust signatures without hardcoding a key. Match the entry by the kid (or pqKid) on the response, never by position; an unknown kid is unverifiable, not refuted. No authentication required.",
   {},
   async () => {
     const res = await fetch(`${API_BASE}/jwks`);
@@ -318,7 +318,7 @@ server.tool(
     suiWallet: z.string().optional().describe("Sui wallet address (0x + 64 hex chars). For verifying SUI or Sui-native tokens (USDC). Use chainId 'sui' with the fully-qualified type string as contractAddress (e.g. '0xdba34672...::usdc::USDC')."),
     proof: z.enum(["merkle"]).optional().describe("Set to 'merkle' for EIP-1186 Merkle storage proofs (2 credits). Available for token_balance on RPC EVM chains, and for erc7710_delegation as a storage proof of the revocation slot (subject 'delegation_revocation'; managers with an on-chain-verified layout only — currently the v1.3.0 manager on Base)."),
     declaredLimits: z.enum(["omit"]).optional().describe("Set to 'omit' to leave decoded caveat limits out of the signed results of erc7710_delegation conditions, so a forwarded attestation does not carry the principal's spending ceiling. met, delegationHash, and conditionHash are byte-identical either way."),
-    format: z.enum(["jwt"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response. Verifiable by any standard JWT library using JWKS at /.well-known/jwks.json."),
+    format: z.enum(["jwt"]).optional().describe("Set to 'jwt' to include a Wallet Auth by InsumerAPI token (ES256-signed JWT) in the response, with its ML-DSA-65 sibling pqJwt beside it. The jwt is verifiable by any standard JWT library using JWKS at /.well-known/jwks.json."),
     conditions: z
       .array(
         z.object({

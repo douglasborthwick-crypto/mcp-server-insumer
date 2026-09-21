@@ -1,6 +1,6 @@
 ---
 name: insumer-verify
-description: Privacy-preserving on-chain verification across 38 blockchains (incl. Bitcoin, Tron, Stellar, Sui). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs — no balances exposed.
+description: Privacy-preserving on-chain verification across 37 blockchains (incl. Bitcoin, Tron, Stellar, Sui). Verify wallet holdings, NFT ownership, EAS attestations, and identity with ECDSA-signed proofs. No balances exposed.
 homepage: https://insumermodel.com/developers/
 metadata:
   clawdbot:
@@ -12,9 +12,9 @@ metadata:
 
 # InsumerAPI Verification Skill
 
-Privacy-preserving on-chain token and NFT verification across 38 blockchains (32 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results — no raw balances exposed.
+Privacy-preserving on-chain token and NFT verification across 37 blockchains (31 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results. No raw balances exposed.
 
-**Version**: 1.13.3
+**Version**: 1.13.4
 
 ## Overview
 
@@ -65,12 +65,12 @@ Generate a free InsumerAPI key instantly. Returns an `insr_live_...` key with 10
 ### Key Discovery (free)
 
 #### `insumer_jwks()`
-Get the JWKS containing InsumerAPI's ECDSA P-256 public signing key (RFC 7517). Use the `kid` from attestation responses to match the correct key. No authentication required.
+Get the JWKS (RFC 7517): five entries over two keys. An ECDSA P-256 key under three kids (`insumer-attest-v1`, `insumer-attest-v2`, `insumer-trust-v2`) and an ML-DSA-65 post-quantum key under two (`insumer-attest-pq1`, `insumer-trust-pq1`). Match the entry by the `kid` (or `pqKid`) on the response, never by position. No authentication required.
 
 ### On-Chain Verification
 
 #### `insumer_attest(wallet?, solanaWallet?, xrplWallet?, bitcoinWallet?, tronWallet?, stellarWallet?, suiWallet?, conditions, proof?, format?)`
-Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, boolean view calls, supply/amount ratios, ERC-8004 agent registration, ERC-7710 delegation validity) across 38 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. Stellar results include `ledgerIndex`/`ledgerHash` and surface `assetCode` (which flows into conditionHash for non-native assets). Sui results include `checkpointSequence`/`checkpointDigest`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs on supported EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
+Verify 1-10 on-chain conditions (token balances, NFT ownership, EAS attestations, Farcaster identity, boolean view calls, supply/amount ratios, ERC-8004 agent registration, ERC-7710 delegation validity) across 37 chains. Returns ECDSA-signed boolean results with `evaluatedCondition`, `conditionHash` (SHA-256), and `blockNumber`/`blockTimestamp`. Stellar results include `ledgerIndex`/`ledgerHash` and surface `assetCode` (which flows into conditionHash for non-native assets). Sui results include `checkpointSequence`/`checkpointDigest`. 1 credit (2 with `proof: "merkle"` for EIP-1186 Merkle storage proofs, available on 27 of the 31 EVM chains: not on ZKsync Era, Sei, Viction or XDC Network, and not on non-EVM chains). Optional `format: "jwt"` for ES256-signed JWT output.
 
 #### `insumer_compliance_templates()`
 List available EAS compliance templates (Coinbase Verified Account/Country/One on Base, Gitcoin Passport on Optimism). Pre-configured schema IDs, attester addresses, and decoder contracts. Free, no auth.
@@ -154,9 +154,9 @@ Check discount eligibility in Google Universal Commerce Protocol (UCP) format. R
 #### `insumer_validate_code(code)`
 Validate an INSR-XXXXX discount code. Returns validity, discount percent, and expiry. Free, no auth required.
 
-## Supported Chains (38)
+## Supported Chains (37)
 
-Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Moonbeam, Moonriver, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Robinhood Chain, Solana, XRPL, Bitcoin, Tron, Stellar, Sui.
+Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, Gnosis, Mantle, Scroll, Linea, zkSync Era, Blast, Taiko, Ronin, Celo, Viction, opBNB, World Chain, Unichain, Ink, Sei, Berachain, ApeChain, Chiliz, Soneium, Plume, Robinhood Chain, Arc, Solana, XRPL, Bitcoin, Tron, Stellar, Sui.
 
 ## Security Model
 

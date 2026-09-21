@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.5 (2026-09-21)
+
+- Aligns the trust profile counts with the engine as of 2026-09-21, when USDC on Arc became a trust check: 45 base checks across 26 chains in 5 dimensions (was 44 across 25), up to 50 across 28 chains in 9 dimensions with the optional wallets (was 49 across 27). The stablecoin dimension is USDC + USDT across 22 EVM chains.
+- Pay-per-call: the x402 client now picks the Base entry of the quote by network, not by position. Quotes list five settlement networks since Arc was added; this client pays on Base only, as before.
+
 ## 1.13.4 (2026-09-20)
 
 - Aligns chain counts with the engine: 37 chains, 31 EVM; NFT ownership on 33. SKILL.md lists all 37, including Arc.

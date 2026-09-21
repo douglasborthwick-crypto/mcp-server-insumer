@@ -78,8 +78,10 @@ async function x402Call(
     accepts?: Array<{ amount: string; asset: string; payTo: string; network: string; scheme: string; extra?: { name?: string; version?: string } }>;
     resource?: unknown;
   };
-  const req = quote.accepts?.[0];
-  if (!req) return { ok: false, error: "x402 quote had no payable options." };
+  // The quote lists one entry per settlement network; this client pays on Base only,
+  // so pick that entry by network rather than by position.
+  const req = quote.accepts?.find((a) => a.network === "eip155:8453");
+  if (!req) return { ok: false, error: "x402 quote had no Base (eip155:8453) payment option." };
 
   // 2. sign EIP-3009 TransferWithAuthorization for exactly the quoted amount
   const now = Math.floor(Date.now() / 1000);
@@ -231,7 +233,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.13.4",
+  version: "1.13.5",
 });
 
 // ============================================================
@@ -382,7 +384,7 @@ server.tool(
 
 server.tool(
   "insumer_wallet_trust",
-  "Generate a structured, ECDSA-signed wallet trust fact profile. Send an EVM wallet address and get 44 base checks across 25 chains in 5 dimensions: stablecoins (USDC + USDT across 21 EVM chains), governance (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), staking (stETH, rETH, cbETH), and institutional stablecoins (EURCV, USDCV, USDC, and BENJI across Ethereum, Solana, XRPL, Stellar, and Sui — the cross-chain entries evaluate when the matching optional wallet is supplied). Add optional Solana, XRPL, Bitcoin, and Tron wallets to reach up to 49 checks across 27 chains in 9 dimensions (adds Solana USDC, XRPL RLUSD + USDC, native BTC holdings, and Tron USDT-TRC20). Returns per-dimension pass/fail counts and an overall summary — no score, no opinion, just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
+  "Generate a structured, ECDSA-signed wallet trust fact profile. Send an EVM wallet address and get 45 base checks across 26 chains in 5 dimensions: stablecoins (USDC + USDT across 22 EVM chains), governance (UNI, AAVE, ARB, OP), NFTs (BAYC, Pudgy Penguins, Wrapped CryptoPunks), staking (stETH, rETH, cbETH), and institutional stablecoins (EURCV, USDCV, USDC, and BENJI across Ethereum, Solana, XRPL, Stellar, and Sui — the cross-chain entries evaluate when the matching optional wallet is supplied). Add optional Solana, XRPL, Bitcoin, and Tron wallets to reach up to 50 checks across 28 chains in 9 dimensions (adds Solana USDC, XRPL RLUSD + USDC, native BTC holdings, and Tron USDT-TRC20). Returns per-dimension pass/fail counts and an overall summary — no score, no opinion, just cryptographically verifiable evidence organized by dimension. Designed for AI agent-to-agent trust decisions. Costs 3 credits (standard) or 6 credits (proof: 'merkle').",
   {
     wallet: z.string().describe("EVM wallet address (0x...) to profile"),
     solanaWallet: z.string().optional().describe("Solana wallet address (base58). If provided, adds USDC on Solana and institutional EURCV/USDCV on Solana checks."),

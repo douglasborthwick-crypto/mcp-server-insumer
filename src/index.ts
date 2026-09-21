@@ -167,19 +167,15 @@ const ChainId = z
 
 const OnboardingChainId = z
   .union([
-    z.enum(["1", "50", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866", "480", "146", "100", "5000", "534352", "59144", "324", "81457", "42220", "204", "130", "57073", "1329", "80094", "33139", "4663"]).transform(Number),
+    z.enum(["1", "50", "56", "8453", "43114", "137", "42161", "10", "88888", "1868", "98866", "480", "146", "100", "5000", "534352", "59144", "324", "81457", "42220", "204", "130", "57073", "1329", "80094", "33139", "4663", "167000", "2020", "88", "5042"]).transform(Number),
     z.number().int().refine(
-      (n) => [1, 50, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 204, 130, 57073, 1329, 80094, 33139, 4663].includes(n),
+      (n) => [1, 50, 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 204, 130, 57073, 1329, 80094, 33139, 4663, 167000, 2020, 88, 5042].includes(n),
       "Must be a supported onboarding chain"
     ),
     z.literal("solana"),
     z.literal("xrpl"),
-    z.literal("bitcoin"),
-    z.literal("tron"),
-    z.literal("stellar"),
-    z.literal("sui"),
   ])
-  .describe("Merchant onboarding chain: an EVM chain ID from the merchant-registry set of 27 (1, 50 (XDC), 56, 8453, 43114, 137, 42161, 10, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 204, 130, 57073, 1329, 80094, 33139, 88888, 1868, 98866, 480, 4663 (Robinhood Chain)), 'solana', 'xrpl', 'bitcoin', 'tron', 'stellar', or 'sui'. Taiko, Ronin, Viction and Arc are not in this tool's set but remain queryable via insumer_attest and insumer_trust.");
+  .describe("Merchant onboarding chain: any of the 31 EVM chain IDs (1, 50 (XDC), 56, 8453, 43114, 137, 42161, 10, 88888, 1868, 98866, 480, 146, 100, 5000, 534352, 59144, 324, 81457, 42220, 204, 130, 57073, 1329, 80094, 33139, 4663 (Robinhood Chain), 167000 (Taiko), 2020 (Ronin), 88 (Viction), 5042 (Arc)), 'solana', or 'xrpl'. Merchant token and NFT configs are not available on Bitcoin, Tron, Stellar or Sui.");
 
 const UsdcChainId = z
   .union([
@@ -216,7 +212,7 @@ const TokenConfigSchema = z.object({
   symbol: z.string().max(10).describe("Token symbol, e.g. 'UNI'"),
   chainId: OnboardingChainId,
   contractAddress: z.string().describe("Token contract address. For XRPL: use r-address issuer for trust line tokens, or 'native' for XRP."),
-  decimals: z.number().int().min(0).max(18).optional().describe("Token decimals (0-18, default 18)"),
+  decimals: z.number().int().min(0).max(18).describe("Token decimals (0-18). Required: the merchant registry stores it with each token and rejects a config without it. 6 for USDC, 18 for most ERC-20s."),
   currency: z.string().optional().describe("XRPL trust line currency code (e.g. 'RLUSD', 'USDC', or 'USD'). Required for XRPL trust line tokens. Standard codes ≤ 3 chars; longer names like 'RLUSD' are auto hex-encoded by the API."),
   tiers: z.array(TierSchema).min(1).max(4).describe("1-4 discount tiers"),
 });
@@ -233,7 +229,7 @@ const NftCollectionSchema = z.object({
 
 const server = new McpServer({
   name: "insumer",
-  version: "1.13.5",
+  version: "1.13.6",
 });
 
 // ============================================================

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.6 (2026-09-21)
+
+- `insumer_configure_tokens` / `insumer_configure_nfts`: the chain field now matches what the merchant registry accepts, all 31 EVM chains (adds Taiko, Ronin, Viction and Arc) plus Solana and XRPL. Bitcoin, Tron, Stellar and Sui are no longer offered; the registry rejects them with a 400.
+- `insumer_configure_tokens`: `decimals` is required (0-18). The description said "default 18", but the registry rejects a token config without it.
+
 ## 1.13.5 (2026-09-21)
 
 - Aligns the trust profile counts with the engine as of 2026-09-21, when USDC on Arc became a trust check: 45 base checks across 26 chains in 5 dimensions (was 44 across 25), up to 50 across 28 chains in 9 dimensions with the optional wallets (was 49 across 27). The stablecoin dimension is USDC + USDT across 22 EVM chains.

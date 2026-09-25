@@ -287,7 +287,7 @@ If the API cannot reach one or more blockchain data sources after retries, endpo
 - **ElizaOS Plugin:** `@insumermodel/plugin-eliza` ([npm](https://www.npmjs.com/package/@insumermodel/plugin-eliza))
 - **LangChain (Python):** `pip install langchain-insumer` ([PyPI](https://pypi.org/project/langchain-insumer/))
 - **OpenAI GPT:** [InsumerAPI Wallet Auth](https://chatgpt.com/g/g-699c5e43ce2481918b3f1e7f144c8a49-insumerapi-wallet-auth) (GPT Store)
-- **Verifier (offline JWKS):** `npm install insumer-verify` ([npm](https://www.npmjs.com/package/insumer-verify))
+- **Verifier (offline JWKS):** `npm install insumer-verify` ([npm](https://www.npmjs.com/package/insumer-verify), [source](https://github.com/insumerapi/insumer-verify))
 
 ## Development
 

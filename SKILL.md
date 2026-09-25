@@ -174,3 +174,4 @@ Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, G
 - OpenAPI Spec: https://insumermodel.com/openapi.yaml
 - GitHub: https://github.com/douglasborthwick-crypto/mcp-server-insumer
 - Verifier: https://www.npmjs.com/package/insumer-verify
+- Verifier source: https://github.com/insumerapi/insumer-verify

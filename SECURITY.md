@@ -4,7 +4,7 @@
 
 Please report security issues privately, through GitHub's private vulnerability reporting:
 
-**[Report a vulnerability](https://github.com/douglasborthwick-crypto/mcp-server-insumer/security/advisories/new)**
+**[Report a vulnerability](https://github.com/insumerapi/mcp-server-insumer/security/advisories/new)**
 
 That opens an advisory visible only to you and the maintainers. If you cannot use GitHub, email support@insumermodel.com.
 

@@ -14,7 +14,7 @@ metadata:
 
 Privacy-preserving on-chain token and NFT verification across 37 blockchains (31 EVM + Solana + XRPL + Bitcoin + Tron + Stellar + Sui). Returns ECDSA-signed boolean results. No raw balances exposed.
 
-**Version**: 1.13.7
+**Version**: 1.13.8
 
 ## Overview
 
@@ -172,6 +172,6 @@ Ethereum, Base, Polygon, Arbitrum, Optimism, BNB Chain, Avalanche, XDC, Sonic, G
 - Homepage: https://insumermodel.com/developers/
 - MCP Server: https://www.npmjs.com/package/mcp-server-insumer
 - OpenAPI Spec: https://insumermodel.com/openapi.yaml
-- GitHub: https://github.com/douglasborthwick-crypto/mcp-server-insumer
+- GitHub: https://github.com/insumerapi/mcp-server-insumer
 - Verifier: https://www.npmjs.com/package/insumer-verify
 - Verifier source: https://github.com/insumerapi/insumer-verify

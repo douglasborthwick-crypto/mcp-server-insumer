@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.8 (2026-09-25)
+
+- The repository moved to the insumerapi GitHub organization: repository, security-reporting and source links point to github.com/insumerapi/mcp-server-insumer. No code changes; the registry name is unchanged.
+
 ## 1.13.7 (2026-09-25)
 
 - README only, no code changes. The opening line states what a verifier can check: every result is signed and checkable offline against the published keys, and on EVM chains an optional Merkle proof lets the verifier check the balance against the block header without trusting the API. It no longer says no trust in the API provider is needed, which held only for the Merkle-proof case.

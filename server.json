@@ -3,15 +3,15 @@
   "name": "io.github.douglasborthwick-crypto/insumer",
   "description": "Read-first blockchain verification. ECDSA-signed booleans across 37 chains. 27 tools.",
   "repository": {
-    "url": "https://github.com/douglasborthwick-crypto/mcp-server-insumer",
+    "url": "https://github.com/insumerapi/mcp-server-insumer",
     "source": "github"
   },
-  "version": "1.13.7",
+  "version": "1.13.8",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "mcp-server-insumer",
-      "version": "1.13.7",
+      "version": "1.13.8",
       "transport": {
         "type": "stdio"
       },

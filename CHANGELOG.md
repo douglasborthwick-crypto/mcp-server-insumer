@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.7 (2026-09-25)
+
+- README only, no code changes. The opening line states what a verifier can check: every result is signed and checkable offline against the published keys, and on EVM chains an optional Merkle proof lets the verifier check the balance against the block header without trusting the API. It no longer says no trust in the API provider is needed, which held only for the Merkle-proof case.
+- Drops the closed langchain-community PR from the list of other distribution channels.
+
 ## 1.13.6 (2026-09-21)
 
 - `insumer_configure_tokens` / `insumer_configure_nfts`: the chain field now matches what the merchant registry accepts, all 31 EVM chains (adds Taiko, Ronin, Viction and Arc) plus Solana and XRPL. Bitcoin, Tron, Stellar and Sui are no longer offered; the registry rejects them with a 400.
